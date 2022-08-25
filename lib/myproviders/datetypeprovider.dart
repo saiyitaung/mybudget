@@ -3,13 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum DateType { day, week, month, year }
 
-class DateTypeChangeNotifier extends ChangeNotifier {
-  DateType dateType = DateType.year;
-  void change(DateType dt){
-    dateType=dt;
-    notifyListeners();
+class DateTypeChangeNotifier extends StateNotifier<DateType> {
+  DateTypeChangeNotifier(super.state);
+  void change(DateType dt) {
+    state = dt;
   }
 }
+
 final dateTypeChangeNotifierProvider =
-    ChangeNotifierProvider<DateTypeChangeNotifier>(
-        ((ref) => DateTypeChangeNotifier()));
+    StateNotifierProvider<DateTypeChangeNotifier, DateType>(
+        ((ref) => DateTypeChangeNotifier(DateType.week)));
+class DateStateNotifier extends StateNotifier<DateTime>{
+  DateStateNotifier(super.state);
+}
+final dateStateNotifier=StateNotifierProvider<DateStateNotifier,DateTime>(((ref) => DateStateNotifier(DateTime.now())));

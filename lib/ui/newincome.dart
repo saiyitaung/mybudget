@@ -2,25 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
-import 'package:mybudget/entities/expense.dart';
+import 'package:mybudget/entities/income.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
-import 'package:mybudget/myproviders/expcategoryprovider.dart';
-import 'package:mybudget/myproviders/expstateprovider.dart';
+import 'package:mybudget/myproviders/incomeprovider.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/inputtext.dart';
 import 'package:uuid/uuid.dart';
 
-class NewExpUI extends HookWidget {
-  const NewExpUI({Key? key}) : super(key: key);
+class NewIncomeUI extends HookWidget {
+  const NewIncomeUI({Key? key}) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     var detail = useTextEditingController();
     var amount = useTextEditingController();
     var selectedCurrency = Currency.mmk;
-    var selectedCategory = ExpenseCategory.foodanddrink;
+    var selectedCategory = IncomeCategory.salary;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text("New Expense")),
+      appBar: AppBar(title: Text("New Income")),
       body: Padding(
         child: Column(
           children: [
@@ -79,57 +78,56 @@ class NewExpUI extends HookWidget {
             ),
             InputTextWidget(
               label: "Amount",
-              type: TextInputType.number,
+              type: TextInputType.text,
               ctl: amount,
             ),
             SizedBox(
               height: 10,
             ),
-            Consumer(builder: ((context, ref, child) {
-              final _selectedCategory = ref.watch(expCategoryChangeNotifier);
-              return DropdownButton<ExpenseCategory>(
+            Consumer(builder: (context, ref, child) {
+              return DropdownButton<IncomeCategory>(
                   isExpanded: true,
                   dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                  items: expCategories
+                  items: inCategories
                       .map(
                         (e) => DropdownMenuItem(
                           child: Container(
-                            child: Row(children: [
+                              child: Row(
+                            children: [
                               Icon(
-                                expCategoryIcons[e.name],
-                                color: expCategoryColors[e.name],
+                                inCategoryIcons[e.name],
+                                color: Colors.green,
                               ),
                               SizedBox(
                                 width: 10,
                               ),
-                              Text(categoriesString[e.name]!)
-                            ]),
-                          ),
+                              Text(e.name),
+                            ],
+                          )),
                           value: e,
                         ),
                       )
                       .toList(),
-                  value: _selectedCategory.expcategory,
+                  value: ref.watch(inCategoryChangeNotifier).incategory,
                   onChanged: (v) {
-                    _selectedCategory.change(v!);
-                    selectedCategory = v;
+                    selectedCategory=v!;
+                    ref.read(inCategoryChangeNotifier).change(v);
                   });
-            })),
+            }),
             Consumer(builder: (context, ref, child) {
-              final expState = ref.watch(expStateProvider.notifier);
+              final _incomeState = ref.watch(incomeStateNotifier.notifier);
               return TextButton(
                 onPressed: () {
-                  debugPrint(
-                      "${detail.text} ${amount.text} $selectedCurrency $selectedCategory");
-                  Navigator.pop(context);
-                  final e = Expense(
+                  debugPrint("${detail.text} ${amount.text} $selectedCurrency");
+                  var newItem = InCome(
                       id: Uuid().v4(),
                       detail: detail.text,
                       amount: double.parse(amount.text),
-                      timeStamp: DateTime.now(),
                       currency: selectedCurrency.name,
-                      expCategory: selectedCategory.name);
-                  expState.add(e);
+                      timeStamp: DateTime.now(),
+                      inCategory: selectedCategory.name);
+                  _incomeState.add(newItem);
+                  Navigator.pop(context);
                 },
                 child: Container(
                   child: const Text(
