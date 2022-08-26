@@ -4,9 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mybudget/entities/budget.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/expense.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 
+//const list of expense category
+//for dropdown choice and other
 final expCategories = [
   ExpenseCategory.foodanddrink,
   ExpenseCategory.health,
@@ -16,6 +19,7 @@ final expCategories = [
   ExpenseCategory.clothing,
   ExpenseCategory.other
 ];
+//Map of
 final Map<String, String> categoriesString = {
   ExpenseCategory.foodanddrink.name: "Food and Drinks",
   ExpenseCategory.health.name: "Health",
@@ -53,10 +57,13 @@ final Map<String, IconData> inCategoryIcons = {
   IncomeCategory.service.name: FontAwesomeIcons.screwdriverWrench,
   IncomeCategory.soldProperty.name: FontAwesomeIcons.arrowsRotate
 };
+// dateFmt for formate date day/month/year
 String dateFmt(DateTime d) {
   return "${d.day}/${d.month}/${d.year}";
 }
 
+//totalExp
+//get total amount in the list of Expense
 double totalExp(List<Expense> data) {
   double total = 0.0;
   for (final e in data) {
@@ -65,6 +72,7 @@ double totalExp(List<Expense> data) {
   return total;
 }
 
+//getDayInMonth return how many days in a month
 int getDayInMonth(int month, int year) {
   int days = 0;
   switch (month) {
@@ -112,6 +120,7 @@ int getDayInMonth(int month, int year) {
   return days;
 }
 
+//getInititalIndex return DateType index for button toggle
 int getInititalIndex(DateType dt) {
   switch (dt) {
     case DateType.week:
@@ -125,20 +134,25 @@ int getInititalIndex(DateType dt) {
   }
 }
 
-Map<double, double> weekLineBarData(List<Budget> data, DateTime date) {
+//weekLineBarData return Map<double,double> for chart in a week
+//example {0:1000,1:2000,2:3000}
+Map<double, double> weekLineBarData(
+    List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> weeklyData = {};
   double index = 0;
-  final budgetCal = BudgetCalc(data);
+  final budgetCal = BudgetCalc(data, currency);
   for (final d in dateInWeek(date)) {
     weeklyData[index] = budgetCal.totalInDay(d);
     index++;
   }
   return weeklyData;
 }
-
-Map<double, double> monthLineBarData(List<Budget> data, DateTime date) {
+//weekLineBarData return Map<double,double> for chart in a month
+//example {0:1000,1:2000,2:3000}
+Map<double, double> monthLineBarData(
+    List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> monthData = {};
-  final budgetCal = BudgetCalc(data);
+  final budgetCal = BudgetCalc(data, currency);
   double index = 0;
   for (int day = 1; day < getDayInMonth(date.month, date.year); day++) {
     monthData[index] =
@@ -147,10 +161,12 @@ Map<double, double> monthLineBarData(List<Budget> data, DateTime date) {
   }
   return monthData;
 }
-
-Map<double, double> yearLineBarData(List<Budget> data, DateTime date) {
+//weekLineBarData return Map<double,double> for chart in a year
+//example {0:1000,1:2000,2:3000}
+Map<double, double> yearLineBarData(
+    List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> yearData = {};
-  final budgetCal = BudgetCalc(data);
+  final budgetCal = BudgetCalc(data, currency);
   double index = 0;
   for (int month = 1; month <= 12; month++) {
     yearData[index] = budgetCal.totalInMonth(month, date.year);
@@ -158,7 +174,9 @@ Map<double, double> yearLineBarData(List<Budget> data, DateTime date) {
   }
   return yearData;
 }
-
+/*getBalance  return String for balance
+if balance is large amount
+*/
 String getBalance(double amount) {
   if (amount > 1000000 && amount < 1000000000) {
     return "${(amount / 1000000).toStringAsFixed(3)} M";
@@ -170,7 +188,8 @@ String getBalance(double amount) {
     return "$amount";
   }
 }
-
+//getTotalBudget 
+//return total balance in (week,month,year)
 double getTotalBudget(BudgetCalc budgetCalc, DateType dt, DateTime date) {
   double total = 0.0;
   switch (dt) {
@@ -188,7 +207,8 @@ double getTotalBudget(BudgetCalc budgetCalc, DateType dt, DateTime date) {
   }
   return total;
 }
-
+//dateInWeek
+//return list of date in a week choose by d (argument)
 List<DateTime> dateInWeek(DateTime d) {
   List<DateTime> week = [];
   switch (d.weekday) {
@@ -247,45 +267,87 @@ List<DateTime> dateInWeek(DateTime d) {
   }
   return week;
 }
-
+//yearBottomTitleWidgets
+//return Title widget for chart
 Widget yearBottomTitleWidgets(double value, TitleMeta meta) {
+  const style = TextStyle(
+      color: Color(0xff68737d),
+      fontSize: 16,
+      fontFamily: "Itim",
+      fontWeight: FontWeight.bold);
   Widget text;
   switch (value.toInt()) {
     case 0:
-      text = const Text("Jan");
+      text = const Text(
+        "Jan",
+        style: style,
+      );
       break;
     case 1:
-      text = const Text("Feb");
+      text = const Text(
+        "Feb",
+        style: style,
+      );
       break;
     case 2:
-      text = const Text("Mar");
+      text = const Text(
+        "Mar",
+        style: style,
+      );
       break;
     case 3:
-      text = const Text("Apr");
+      text = const Text(
+        "Apr",
+        style: style,
+      );
       break;
     case 4:
-      text = const Text("May");
+      text = const Text(
+        "May",
+        style: style,
+      );
       break;
     case 5:
-      text = const Text("Jun");
+      text = const Text(
+        "Jun",
+        style: style,
+      );
       break;
     case 6:
-      text = const Text("Jul");
+      text = const Text(
+        "Jul",
+        style: style,
+      );
       break;
     case 7:
-      text = const Text("Aug");
+      text = const Text(
+        "Aug",
+        style: style,
+      );
       break;
     case 8:
-      text = const Text("Sep");
+      text = const Text(
+        "Sep",
+        style: style,
+      );
       break;
     case 9:
-      text = const Text("Oct");
+      text = const Text(
+        "Oct",
+        style: style,
+      );
       break;
     case 10:
-      text = const Text("Nov");
+      text = const Text(
+        "Nov",
+        style: style,
+      );
       break;
     case 11:
-      text = const Text("Dec");
+      text = const Text(
+        "Dec",
+        style: style,
+      );
       break;
     default:
       text = const Text('');
@@ -299,28 +361,54 @@ Widget yearBottomTitleWidgets(double value, TitleMeta meta) {
 }
 
 Widget monthBottomTitleWidgets(double value, TitleMeta meta) {
+  const style = TextStyle(
+      color: Color(0xff68737d),
+      fontSize: 16,
+      fontFamily: "Itim",
+      fontWeight: FontWeight.bold);
   Widget text;
   switch (value.toInt()) {
     case 0:
-      text = const Text("1");
+      text = const Text(
+        "1",
+        style: style,
+      );
       break;
-    case 5:
-      text = const Text("5");
+    case 4:
+      text = const Text(
+        "5",
+        style: style,
+      );
       break;
-    case 10:
-      text = const Text("10");
+    case 9:
+      text = const Text(
+        "10",
+        style: style,
+      );
       break;
-    case 15:
-      text = const Text("15");
+    case 14:
+      text = const Text(
+        "15",
+        style: style,
+      );
       break;
-    case 20:
-      text = const Text("20");
+    case 19:
+      text = const Text(
+        "20",
+        style: style,
+      );
       break;
-    case 25:
-      text = const Text("25");
+    case 24:
+      text = const Text(
+        "25",
+        style: style,
+      );
       break;
-    case 30:
-      text = const Text("30");
+    case 29:
+      text = const Text(
+        "30",
+        style: style,
+      );
       break;
     default:
       text = const Text('');
@@ -334,9 +422,10 @@ Widget monthBottomTitleWidgets(double value, TitleMeta meta) {
 
 Widget weekbottomTitleWidgets(double value, TitleMeta meta) {
   const style = TextStyle(
-    color: Color(0xff68737d),
-    fontSize: 16,
-  );
+      color: Color(0xff68737d),
+      fontSize: 16,
+      fontFamily: "Itim",
+      fontWeight: FontWeight.bold);
   Widget text;
   switch (value.toInt()) {
     case 0:
@@ -374,7 +463,6 @@ Widget weekbottomTitleWidgets(double value, TitleMeta meta) {
   return SideTitleWidget(
     axisSide: meta.axisSide,
     space: 3.0,
-    angle: -45.0,
     child: text,
   );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mybudget/entities/expense.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/utils/utils.dart';
@@ -29,21 +30,20 @@ class CategoryDetailUI extends ConsumerWidget {
   }
 
   List<Widget> getSliverList(BuildContext context, WidgetRef ref) {
-
-
     Map<double, double> lineBarData = {};
     switch (ref.watch(dateTypeChangeNotifierProvider)) {
+      
       case DateType.week:
         lineBarData = weekLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            filteredExpense, ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;

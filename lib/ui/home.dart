@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/expense.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
@@ -18,6 +19,7 @@ import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/cardwidget.dart';
 import 'package:mybudget/widgets/categoryicon.dart';
+import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/mypiechart.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -38,7 +40,8 @@ class HomeViewUI extends ConsumerWidget {
     final selectedDateType = ref.watch(dateTypeChangeNotifierProvider);
     final selectedDate = ref.watch(dateStateNotifier);
     final exps = ref.watch(expStateProvider);
-    var categoryCalc = totalByCategory(exps, selectedDateType, selectedDate);
+    var categoryCalc = totalByCategory(exps, selectedDateType, selectedDate,
+        ref.watch(currencyChangeNotifier).currency);
     categoryCalc.forEach((k, v) {
       if (v > 0) {
         debugPrint("$k : $v");
@@ -50,12 +53,15 @@ class HomeViewUI extends ConsumerWidget {
   }
 
   List<Widget> getSliverList(BuildContext context, WidgetRef ref) {
-    
-    final incomeBudgetCalc = BudgetCalc(ref.watch(incomeStateNotifier));
-    final expBudgetCalc = BudgetCalc(ref.watch(expStateProvider));
-    final date=ref.watch(dateStateNotifier);
-    double totalExpense = getTotalBudget(expBudgetCalc, ref.watch(dateTypeChangeNotifierProvider), date);
-    double totalIncome =getTotalBudget(incomeBudgetCalc, ref.watch(dateTypeChangeNotifierProvider), date);
+    final incomeBudgetCalc = BudgetCalc(ref.watch(incomeStateNotifier),
+        ref.watch(currencyChangeNotifier).currency);
+    final expBudgetCalc = BudgetCalc(ref.watch(expStateProvider),
+        ref.watch(currencyChangeNotifier).currency);
+    final date = ref.watch(dateStateNotifier);
+    double totalExpense = getTotalBudget(
+        expBudgetCalc, ref.watch(dateTypeChangeNotifierProvider), date);
+    double totalIncome = getTotalBudget(
+        incomeBudgetCalc, ref.watch(dateTypeChangeNotifierProvider), date);
     List<Widget> children = [];
     children.add(
       Container(
@@ -65,7 +71,13 @@ class HomeViewUI extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(),
-            Text("Sai Yi"),
+            Text(
+              "Sai Yi",
+              style: TextStyle(
+                  fontFamily: 'Itim',
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.push(context,
@@ -100,14 +112,24 @@ class HomeViewUI extends ConsumerWidget {
             Flexible(
               flex: 1,
               child: InkWell(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => IncomeUI())),
-                child: CardWidget(
-                  title: "Income",
-                  amount: "$totalIncome",
-                  color: Colors.green,
-                ),
-              ),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => IncomeUI())),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: CardWidget(
+                          title: "Income",
+                          amount: "$totalIncome",
+                          color: Colors.green,
+                        ),
+                      ),
+                      Positioned(
+                        child: Icon(Icons.arrow_circle_down,color: Colors.white70),
+                        top: 15,
+                        left: 15,
+                      ),
+                    ],
+                  )),
             ),
             SizedBox(
               width: 10,
@@ -115,14 +137,24 @@ class HomeViewUI extends ConsumerWidget {
             Flexible(
               flex: 1,
               child: InkWell(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ExpenseUI())),
-                child: CardWidget(
-                  title: "Expense",
-                  amount: "${getBalance(totalExpense)}",
-                  color: Colors.red,
-                ),
-              ),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ExpenseUI())),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: CardWidget(
+                          title: "Expense",
+                          amount: "${getBalance(totalExpense)}",
+                          color: Colors.red,
+                        ),
+                      ),
+                      Positioned(
+                        child: Icon(Icons.arrow_circle_up,color: Colors.white70,),
+                        top: 15,
+                        left: 15,
+                      ),
+                    ],
+                  )),
             ),
             SizedBox(
               width: 10,
@@ -142,37 +174,10 @@ class HomeViewUI extends ConsumerWidget {
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Text("Overall expense"),
           Container(
-            height: 30,
-            child: ToggleSwitch(
-              activeFgColor: Colors.white,
-              activeBgColor: [Colors.teal],
-              initialLabelIndex:
-                  getInititalIndex(ref.read(dateTypeChangeNotifierProvider)),
-              labels: ['week', 'month', 'year'],
-              totalSwitches: 3,
-              onToggle: (index) {
-                switch (index) {
-                  case 0:
-                    ref
-                        .read(dateTypeChangeNotifierProvider.notifier)
-                        .change(DateType.week);
-                    break;
-                  case 1:
-                    ref
-                        .read(dateTypeChangeNotifierProvider.notifier)
-                        .change(DateType.month);
-
-                    break;
-                  case 2:
-                    ref
-                        .read(dateTypeChangeNotifierProvider.notifier)
-                        .change(DateType.year);
-
-                    break;
-                }
-              },
-            ),
-          ),
+              height: 30,
+              child: DateToggle(
+                selectedDateType: ref.watch(dateTypeChangeNotifierProvider),
+              )),
         ]),
       ),
     );
@@ -181,19 +186,19 @@ class HomeViewUI extends ConsumerWidget {
         height: 10,
       ),
     );
-
     List<CategoryUsage> listCategoryUsage = [];
     totalByCategory(
             ref.watch(expStateProvider),
             ref.watch(dateTypeChangeNotifierProvider),
-            ref.watch(dateStateNotifier))
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency)
         .forEach((key, value) {
       if (value > 0) {
         listCategoryUsage.add(CategoryUsage(key, value));
       }
     });
     listCategoryUsage.sort(((a, b) => b.amount.compareTo(a.amount)));
-    double total = 0.0;
+
     children.add(
       MyPieChart(
         categoryUsage: listCategoryUsage,
@@ -209,7 +214,9 @@ class HomeViewUI extends ConsumerWidget {
                     MaterialPageRoute(
                       builder: (context) => CategoryDetailUI(
                           filteredExpense: filterByCategory(
-                              ref.watch(expStateProvider), e.category),
+                              ref.watch(expStateProvider),
+                              e.category,
+                              ref.watch(currencyChangeNotifier).currency.name),
                           title: categoriesString[e.category]!),
                     ));
               },
@@ -225,10 +232,11 @@ class HomeViewUI extends ConsumerWidget {
     return children;
   }
 
-  List<Expense> filterByCategory(List<Expense> data, String category) {
+  List<Expense> filterByCategory(
+      List<Expense> data, String category, String currency) {
     List<Expense> filteredCategory = [];
     for (final e in data) {
-      if (e.expCategory == category) {
+      if (e.expCategory == category && e.currency == currency) {
         filteredCategory.add(e);
       }
     }
@@ -237,7 +245,7 @@ class HomeViewUI extends ConsumerWidget {
   }
 
   Map<String, double> totalByCategory(
-      List<Expense> data, DateType dt, DateTime date) {
+      List<Expense> data, DateType dt, DateTime date, Currency currency) {
     final Map<String, double> totalInCategory = {
       ExpenseCategory.foodanddrink.name: 0.0,
       ExpenseCategory.health.name: 0.0,
@@ -247,7 +255,7 @@ class HomeViewUI extends ConsumerWidget {
       ExpenseCategory.clothing.name: 0.0,
       ExpenseCategory.other.name: 0.0,
     };
-    final _exps = BudgetCalc(data);
+    final _exps = BudgetCalc(data, currency);
     switch (dt) {
       case DateType.week:
         for (final e in _exps.getDataInWeek(date)) {

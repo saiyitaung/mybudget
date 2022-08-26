@@ -85,6 +85,7 @@ class NewIncomeUI extends HookWidget {
               height: 10,
             ),
             Consumer(builder: (context, ref, child) {
+              selectedCategory=ref.watch(inCategoryChangeNotifier).incategory;
               return DropdownButton<IncomeCategory>(
                   isExpanded: true,
                   dropdownColor: Theme.of(context).scaffoldBackgroundColor,

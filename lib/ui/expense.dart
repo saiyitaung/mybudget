@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mybudget/entities/expense.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/ui/categorydetail.dart';
@@ -8,6 +9,7 @@ import 'package:mybudget/ui/newexp.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
+import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/linechart.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -19,7 +21,7 @@ class ExpenseUI extends ConsumerWidget {
     final exps = ref.watch(expStateProvider);
     final selectedDateType = ref.watch(dateTypeChangeNotifierProvider);
     final selectedDate = ref.watch(dateStateNotifier);
-    final budgetCalc = BudgetCalc<Expense>(exps);
+    final budgetCalc = BudgetCalc<Expense>(exps,ref.watch(currencyChangeNotifier).currency);
     final total = getTotalBudget(budgetCalc, selectedDateType, selectedDate);
     debugPrint("rebuild $selectedDateType");
     return Scaffold(
@@ -93,22 +95,22 @@ class ExpenseUI extends ConsumerWidget {
   List<Widget> sliverChild(BuildContext context, WidgetRef ref,
       DateType selectedDateType, List<Expense> exps) {
     Map<double, double> lineBarData = {};
-    final budgetCal = BudgetCalc<Expense>(exps);
+    final budgetCal = BudgetCalc<Expense>(exps,ref.watch(currencyChangeNotifier).currency);
     debugPrint("total week : ${budgetCal.totalInWeek(DateTime.now())}");
     List<Widget> childs = [];
     debugPrint("${selectedDateType}");
     switch (selectedDateType) {
       case DateType.week:
         lineBarData = weekLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier));
+            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;
@@ -156,34 +158,7 @@ class ExpenseUI extends ConsumerWidget {
                       icon: Icon(Icons.calendar_month),
                       padding: EdgeInsets.only(bottom: 2),
                     ),
-                    ToggleSwitch(
-                      initialLabelIndex: getInititalIndex(selectedDateType),
-                      activeFgColor: Colors.white,
-                      activeBgColor: [Colors.teal],
-                      labels: ['Week', 'Month', 'Year'],
-                      onToggle: (index) {
-                        switch (index) {
-                          case 0:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.week);
-                            break;
-                          case 1:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.month);
-
-                            break;
-                          case 2:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.year);
-
-                            break;
-                        }
-                        debugPrint("$index");
-                      },
-                    ),
+                    DateToggle(selectedDateType: selectedDateType)
                   ],
                 )),
           ],

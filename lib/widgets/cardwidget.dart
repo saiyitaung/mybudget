@@ -15,32 +15,38 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRect(
-      child:BackdropFilter(
-      filter: new ImageFilter.blur(sigmaX: 3,sigmaY: 3),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(.8),
-              color.withOpacity(.3),
-            ],
-            begin: AlignmentDirectional.topStart,
-            end: AlignmentDirectional.bottomEnd,
+      child: BackdropFilter(
+        filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                color.withOpacity(.8),
+                color.withOpacity(.3),
+              ],
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            border: Border.all(
+              width: 1.5,
+              color: color.withOpacity(0.2),
+            ),
           ),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          border: Border.all(
-            width: 1.5,
-            color: color.withOpacity(0.2),
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontFamily: 'Itim', fontSize: 20),
+                ),
+                Text("$amount",style: TextStyle(fontFamily: 'meriendaone',fontSize: 22),)
+              ],
+            ),
           ),
         ),
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(title), Text("$amount")],
-          ),
-        ),
-      ),
       ),
     );
   }

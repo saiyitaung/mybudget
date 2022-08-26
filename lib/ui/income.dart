@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mybudget/entities/income.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
 import 'package:mybudget/ui/newincome.dart';
+import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
+import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/linechart.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -15,6 +18,7 @@ class IncomeUI extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final incomes = ref.watch(incomeStateNotifier);
+    final incomeBudgetCal=BudgetCalc(incomes,ref.watch(currencyChangeNotifier).currency);
     final selectedDate=ref.watch(dateStateNotifier);
     return Scaffold(
       body: CustomScrollView(
@@ -43,7 +47,7 @@ class IncomeUI extends ConsumerWidget {
                         child: Row(
                       children: [
                         Text(
-                          " 50000",
+                          "${getBalance(getTotalBudget(incomeBudgetCal,ref.watch(dateTypeChangeNotifierProvider) , selectedDate))}",
                           style: TextStyle(
                               fontFamily: "meriendaone",
                               fontSize: 24,
@@ -88,15 +92,15 @@ class IncomeUI extends ConsumerWidget {
     switch (ref.watch(dateTypeChangeNotifierProvider)) {
       case DateType.week:
         lineBarData = weekLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier));
+            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier));
+            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier));
+            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;
@@ -141,33 +145,7 @@ class IncomeUI extends ConsumerWidget {
                       icon: Icon(Icons.calendar_month),
                       padding: EdgeInsets.only(bottom: 2),
                     ),
-                    ToggleSwitch(
-                      initialLabelIndex: getInititalIndex(ref.read(dateTypeChangeNotifierProvider)),
-                      activeFgColor: Colors.white,
-                      activeBgColor: [Colors.teal],
-                      labels: ['week', 'month', 'year'],
-                      onToggle: (index) {
-                        switch (index) {
-                          case 0:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.week);
-                            break;
-                          case 1:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.month);
-
-                            break;
-                          case 2:
-                            ref
-                                .read(dateTypeChangeNotifierProvider.notifier)
-                                .change(DateType.year);
-
-                            break;
-                        }
-                      },
-                    ),
+                    DateToggle(selectedDateType: ref.watch(dateTypeChangeNotifierProvider))
                   ],
                 )),
           ],

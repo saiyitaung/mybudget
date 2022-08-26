@@ -87,6 +87,7 @@ class NewExpUI extends HookWidget {
             ),
             Consumer(builder: ((context, ref, child) {
               final _selectedCategory = ref.watch(expCategoryChangeNotifier);
+              selectedCategory = _selectedCategory.expcategory;
               return DropdownButton<ExpenseCategory>(
                   isExpanded: true,
                   dropdownColor: Theme.of(context).scaffoldBackgroundColor,
