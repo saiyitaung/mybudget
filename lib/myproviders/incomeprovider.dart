@@ -7,19 +7,35 @@ import 'package:mybudget/entities/income.dart';
 class IncomeStateNotifier extends StateNotifier<List<InCome>> {
   IncomeStateNotifier(super.state);
   add(InCome newItem) {
-     incomebox.add(newItem);
-    state = [...state, newItem];   
+    incomebox.put(newItem.id, newItem);
+    state = [...state, newItem];
+  }
+  void update(InCome obj){
+    final index=state.indexOf(obj);
+    state[index] = obj;
+    state = [...state];
+    incomebox.put(obj.id, obj);
+  }
+  remove(InCome item) {
+    if (state.remove(item)) {
+      incomebox.delete(item.id);     
+    }
+     state = [...state];
   }
 }
+
 final incomebox = Hive.box<InCome>("incomedb");
 final incomeStateNotifier =
     StateNotifierProvider<IncomeStateNotifier, List<InCome>>(
         ((ref) => IncomeStateNotifier(incomebox.values.toList())));
-class IncomeCategoryChangeNotifier extends ChangeNotifier{
-  IncomeCategory incategory=IncomeCategory.salary;
-  change(IncomeCategory e){
-    incategory=e;
+
+class IncomeCategoryChangeNotifier extends ChangeNotifier {
+  IncomeCategory incategory = IncomeCategory.salary;
+  change(IncomeCategory e) {
+    incategory = e;
     notifyListeners();
   }
 }
-final inCategoryChangeNotifier=ChangeNotifierProvider(((ref) => IncomeCategoryChangeNotifier()));
+
+final inCategoryChangeNotifier =
+    ChangeNotifierProvider(((ref) => IncomeCategoryChangeNotifier()));

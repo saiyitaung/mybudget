@@ -78,7 +78,7 @@ class BudgetCalc<T extends Budget> {
   List<T> getDataInYear(int y) {
     List<T> yearly = [];
     for (final d in data) {
-      if (d.timeStamp.year == y) {
+      if (d.timeStamp.year == y && currencyType.name == d.currency) {
         yearly.add(d);
       }
     }

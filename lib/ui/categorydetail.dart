@@ -21,8 +21,54 @@ class CategoryDetailUI extends ConsumerWidget {
       backgroundColor: Color(0xff232d37),
       body: CustomScrollView(slivers: [
         SliverAppBar(
-          title: Text(title),
-        ),
+            title: Text(" Expense"),
+            backgroundColor: Color(0xff232d37),
+            pinned: true,
+            expandedHeight: 120,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                width: double.infinity,
+                padding: EdgeInsets.only(top: 80),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        child: Text(
+                      "Total ",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Itim"),
+                    )),
+                    Container(
+                        child: Row(
+                      children: [
+                        Text(
+                          " ${getBalance(totalExp(filteredExpense))}",
+                          style: TextStyle(
+                              fontFamily: "meriendaone",
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        // Container(
+                        //   padding: EdgeInsets.only(top: 5, left: 5),
+                        //   child: Text(
+                        //     // utils.currenciesString[selectedCurrency!]!,
+                        //     getCurrencysLocale(context, selectedCurrency!),
+                        //     style: TextStyle(
+                        //       fontSize: 12,
+                        //       color: Colors.white54,
+                        //       fontFamily: "meriendaone",
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    )),
+                  ],
+                ),
+              ),
+            ),
+          ),
         SliverList(
             delegate: SliverChildListDelegate(getSliverList(context, ref)))
       ]),
@@ -39,33 +85,25 @@ class CategoryDetailUI extends ConsumerWidget {
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            filteredExpense, ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            filteredExpense, ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;
     }
     List<Widget> children = [];
-    children.add(
-      Container(
-        padding: EdgeInsets.only(top:10),
-        width: double.infinity,
-        alignment: Alignment.center,
-        color: Color(0xff232d37),
-        child: Text("Total Usage : ${getBalance(totalExp(filteredExpense))}"),
-        
-      ),
-    );
+     
     children.add(
       CategoryDetailLineChartUI(
-        gradientColors: [Colors.red, Colors.redAccent],
+        gradientColors:const [Colors.red, Colors.redAccent],
         dateType: ref.watch(dateTypeChangeNotifierProvider),
         bardata: lineBarData,
       ),
     );
+    filteredExpense.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
     children.addAll(filteredExpense.map((e) => BudgetItem(
         icondata: expCategoryIcons[e.expCategory]!,
         iconbgColor: expCategoryColors[e.expCategory]!,

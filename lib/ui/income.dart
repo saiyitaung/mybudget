@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mybudget/entities/income.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
+import 'package:mybudget/ui/edit.dart';
 import 'package:mybudget/ui/newincome.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
@@ -18,8 +20,9 @@ class IncomeUI extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final incomes = ref.watch(incomeStateNotifier);
-    final incomeBudgetCal=BudgetCalc(incomes,ref.watch(currencyChangeNotifier).currency);
-    final selectedDate=ref.watch(dateStateNotifier);
+    final incomeBudgetCal =
+        BudgetCalc(incomes, ref.watch(currencyChangeNotifier).currency);
+    final selectedDate = ref.watch(dateStateNotifier);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -47,7 +50,7 @@ class IncomeUI extends ConsumerWidget {
                         child: Row(
                       children: [
                         Text(
-                          "${getBalance(getTotalBudget(incomeBudgetCal,ref.watch(dateTypeChangeNotifierProvider) , selectedDate))}",
+                          "${getBalance(getTotalBudget(incomeBudgetCal, ref.watch(dateTypeChangeNotifierProvider), selectedDate))}",
                           style: TextStyle(
                               fontFamily: "meriendaone",
                               fontSize: 24,
@@ -73,7 +76,8 @@ class IncomeUI extends ConsumerWidget {
             ),
           ),
           SliverList(
-              delegate: SliverChildListDelegate(sliverChild(context,ref, incomes))),
+              delegate:
+                  SliverChildListDelegate(sliverChild(context, ref, incomes))),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -83,24 +87,31 @@ class IncomeUI extends ConsumerWidget {
         },
         child: Icon(Icons.add),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  List<Widget> sliverChild(BuildContext context,WidgetRef ref, List<InCome> incomes) {
+  List<Widget> sliverChild(
+      BuildContext context, WidgetRef ref, List<InCome> incomes) {
     Map<double, double> lineBarData = {};
     switch (ref.watch(dateTypeChangeNotifierProvider)) {
       case DateType.week:
         lineBarData = weekLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(incomeStateNotifier),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(incomeStateNotifier),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(incomeStateNotifier), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(incomeStateNotifier),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;
@@ -121,7 +132,10 @@ class IncomeUI extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              child: Text("Activities",style: TextStyle(fontFamily: "itim",fontSize: 28),),
+              child: Text(
+                "Activities",
+                style: TextStyle(fontFamily: "itim", fontSize: 28),
+              ),
               padding: EdgeInsets.only(left: 20),
             ),
             Container(
@@ -131,35 +145,84 @@ class IncomeUI extends ConsumerWidget {
                     IconButton(
                       onPressed: () {
                         showDatePicker(
-                            context: context,
-                            builder: ((context, child) =>
-                                Theme(data: ThemeData.dark(), child: child!)),
-                            initialDate: ref.read(dateStateNotifier),
-                            firstDate: DateTime(2021),
-                            lastDate: DateTime.now()).then((value) {
-                              if(value != null){
-                                ref.read(dateStateNotifier.notifier).state=value;
-                              }
-                            });
+                                context: context,
+                                builder: ((context, child) => Theme(
+                                    data: ThemeData.dark(), child: child!)),
+                                initialDate: ref.read(dateStateNotifier),
+                                firstDate: DateTime(2021),
+                                lastDate: DateTime.now())
+                            .then((value) {
+                          if (value != null) {
+                            ref.read(dateStateNotifier.notifier).state = value;
+                          }
+                        });
                       },
                       icon: Icon(Icons.calendar_month),
                       padding: EdgeInsets.only(bottom: 2),
                     ),
-                    DateToggle(selectedDateType: ref.watch(dateTypeChangeNotifierProvider))
+                    DateToggle(
+                        selectedDateType:
+                            ref.watch(dateTypeChangeNotifierProvider))
                   ],
                 )),
           ],
         ),
       ),
     );
+    List<InCome> inList = [];
+    final date = ref.watch(dateStateNotifier);
+    final incomeBudgetCal =
+        BudgetCalc(incomes, ref.watch(currencyChangeNotifier).currency);
+    switch (ref.watch(dateTypeChangeNotifierProvider)) {
+      case DateType.week:
+        inList = incomeBudgetCal.getDataInWeek(date);
+        break;
+      case DateType.month:
+        inList = incomeBudgetCal.getDataInMonth(date.month, date.year);
+        break;
+      case DateType.year:
+        inList = incomeBudgetCal.getDataInYear(date.year);
+        break;
+      default:
+        break;
+    }
+    inList.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
     incomes.isEmpty
         ? children.add(EmptyInfoUI())
-        : children.addAll(incomes.map((e) => BudgetItem(
-            icondata: inCategoryIcons[e.inCategory]!,
-            iconbgColor: Colors.green,
-            title: e.detail,
-            date: dateFmt(e.timeStamp),
-            amount: getBalance(e.amount))));
+        : children.addAll(
+            inList.map(
+              (e) => Slidable(
+                 endActionPane: ActionPane(
+                  extentRatio: .3,
+                  children: [
+                    SlidableAction(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      onPressed: (context) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Edit<InCome>(t: e),));
+                      },
+                      icon: Icons.edit,
+                      foregroundColor: Colors.green,
+                    ),
+                    SlidableAction(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      onPressed: (context) {
+                        ref.watch(incomeStateNotifier.notifier).remove(e);
+                      },
+                      foregroundColor: Colors.red,
+                      icon: Icons.delete_forever_sharp,
+                    ),
+                  ],
+                  motion: const ScrollMotion(),
+                ),
+                child: BudgetItem(
+                    icondata: inCategoryIcons[e.inCategory]!,
+                    iconbgColor: Colors.green,
+                    title: e.detail,
+                    date: dateFmt(e.timeStamp),
+                    amount: getBalance(e.amount)),
+              ),
+            ),
+          );
     return children;
   }
 }

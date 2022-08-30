@@ -13,6 +13,16 @@ const currencies = [
   Currency.baht,
   Currency.yen
 ];
+final Map<String, Currency> currencyFromStr = {
+  Currency.mmk.name: Currency.mmk,
+  Currency.yuan.name: Currency.yuan,
+  Currency.dollar.name: Currency.dollar,
+  Currency.euro.name: Currency.euro,
+  Currency.pound.name: Currency.pound,
+  Currency.rupee.name: Currency.rupee,
+  Currency.baht.name: Currency.baht,
+  Currency.yen.name: Currency.yen
+};
 
 class CurrencChangeNotifier extends ChangeNotifier {
   Currency currency = Currency.mmk;
@@ -20,6 +30,7 @@ class CurrencChangeNotifier extends ChangeNotifier {
     currency = c;
     notifyListeners();
   }
+
   Currency get value => currency;
 }
 

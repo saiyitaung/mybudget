@@ -1,15 +1,14 @@
-import 'dart:ui';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
+import 'package:mybudget/myproviders/settingprovider.dart';
 import 'package:mybudget/ui/categorydetail.dart';
 import 'package:mybudget/ui/expense.dart';
 import 'package:mybudget/ui/income.dart';
@@ -18,11 +17,9 @@ import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/cardwidget.dart';
-import 'package:mybudget/widgets/categoryicon.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/mypiechart.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class HomePage extends HookWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -63,6 +60,8 @@ class HomeViewUI extends ConsumerWidget {
     double totalIncome = getTotalBudget(
         incomeBudgetCalc, ref.watch(dateTypeChangeNotifierProvider), date);
     List<Widget> children = [];
+    final picPath = ref.watch(settingProvider)["profilePic"];
+    final picFile = File(picPath!);
     children.add(
       Container(
         margin: EdgeInsets.only(top: 25),
@@ -72,7 +71,9 @@ class HomeViewUI extends ConsumerWidget {
           children: [
             SizedBox(),
             Text(
-              "Sai Yi",
+              ref.watch(settingProvider)["profileName"] == "notfound"
+                  ? "John Doe"
+                  : ref.watch(settingProvider)["profileName"]!,
               style: TextStyle(
                   fontFamily: 'Itim',
                   fontSize: 28,
@@ -89,10 +90,14 @@ class HomeViewUI extends ConsumerWidget {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage("img/profile.png"))),
+                    borderRadius: BorderRadius.circular(50),
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: ref.watch(settingProvider)["profilePic"] ==
+                                "notfound"
+                            ? const AssetImage("img/profile.png")
+                            : Image.file(picFile).image),
+                  ),
                 ),
               ),
             ),
@@ -119,12 +124,13 @@ class HomeViewUI extends ConsumerWidget {
                       Center(
                         child: CardWidget(
                           title: "Income",
-                          amount: "$totalIncome",
+                          amount: "${getBalance(totalIncome)}",
                           color: Colors.green,
                         ),
                       ),
                       Positioned(
-                        child: Icon(Icons.arrow_circle_down,color: Colors.white70),
+                        child: Icon(Icons.arrow_circle_down,
+                            color: Colors.white70),
                         top: 15,
                         left: 15,
                       ),
@@ -149,7 +155,10 @@ class HomeViewUI extends ConsumerWidget {
                         ),
                       ),
                       Positioned(
-                        child: Icon(Icons.arrow_circle_up,color: Colors.white70,),
+                        child: Icon(
+                          Icons.arrow_circle_up,
+                          color: Colors.white70,
+                        ),
                         top: 15,
                         left: 15,
                       ),
@@ -216,7 +225,9 @@ class HomeViewUI extends ConsumerWidget {
                           filteredExpense: filterByCategory(
                               ref.watch(expStateProvider),
                               e.category,
-                              ref.watch(currencyChangeNotifier).currency.name),
+                              ref.watch(currencyChangeNotifier).currency,
+                              ref.watch(dateTypeChangeNotifierProvider),
+                              ref.watch(dateStateNotifier)),
                           title: categoriesString[e.category]!),
                     ));
               },
@@ -232,13 +243,34 @@ class HomeViewUI extends ConsumerWidget {
     return children;
   }
 
-  List<Expense> filterByCategory(
-      List<Expense> data, String category, String currency) {
+  List<Expense> filterByCategory(List<Expense> data, String category,
+      Currency currency, DateType dt, DateTime date) {
     List<Expense> filteredCategory = [];
-    for (final e in data) {
-      if (e.expCategory == category && e.currency == currency) {
-        filteredCategory.add(e);
-      }
+    final exps = BudgetCalc(data, currency);
+    switch (dt) {
+      case DateType.week:
+        for (final e in exps.getDataInWeek(date)) {
+          if (e.expCategory == category && e.currency == currency.name) {
+            filteredCategory.add(e);
+          }
+        }
+        break;
+      case DateType.month:
+        for (final e in exps.getDataInMonth(date.month, date.year)) {
+          if (e.expCategory == category && e.currency == currency.name) {
+            filteredCategory.add(e);
+          }
+        }
+        break;
+      case DateType.year:
+        for (final e in exps.getDataInYear(date.year)) {
+          if (e.expCategory == category && e.currency == currency.name) {
+            filteredCategory.add(e);
+          }
+        }
+        break;
+      default:
+        break;
     }
     filteredCategory.sort((a, b) => a.timeStamp.compareTo(b.timeStamp));
     return filteredCategory;
@@ -255,22 +287,22 @@ class HomeViewUI extends ConsumerWidget {
       ExpenseCategory.clothing.name: 0.0,
       ExpenseCategory.other.name: 0.0,
     };
-    final _exps = BudgetCalc(data, currency);
+    final exps = BudgetCalc(data, currency);
     switch (dt) {
       case DateType.week:
-        for (final e in _exps.getDataInWeek(date)) {
+        for (final e in exps.getDataInWeek(date)) {
           totalInCategory[e.expCategory] =
               totalInCategory[e.expCategory]! + e.amount;
         }
         break;
       case DateType.month:
-        for (final e in _exps.getDataInMonth(date.month, date.year)) {
+        for (final e in exps.getDataInMonth(date.month, date.year)) {
           totalInCategory[e.expCategory] =
               totalInCategory[e.expCategory]! + e.amount;
         }
         break;
       case DateType.year:
-        for (final e in _exps.getDataInYear(date.year)) {
+        for (final e in exps.getDataInYear(date.year)) {
           totalInCategory[e.expCategory] =
               totalInCategory[e.expCategory]! + e.amount;
         }

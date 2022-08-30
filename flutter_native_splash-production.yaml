@@ -1,0 +1,16 @@
+# flutter_native_splash-production.yaml
+flutter_native_splash:
+  color: "#ffffff"
+  image: img/applogo.png
+  branding: img/applogo.png
+  color_dark: "#121212"
+  image_dark: img/bg.png
+  branding_dark: img/applogo.png
+
+  android_12:
+    image: img/applogo.png
+    icon_background_color: "#ffffff"
+    image_dark: img/bg.png
+    icon_background_color_dark: "#121212"
+
+  web: false

@@ -8,8 +8,8 @@ import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 
-//const list of expense category
-//for dropdown choice and other
+///const list of expense category
+///for dropdown choice and other
 final expCategories = [
   ExpenseCategory.foodanddrink,
   ExpenseCategory.health,
@@ -19,7 +19,7 @@ final expCategories = [
   ExpenseCategory.clothing,
   ExpenseCategory.other
 ];
-//Map of
+///Map of
 final Map<String, String> categoriesString = {
   ExpenseCategory.foodanddrink.name: "Food and Drinks",
   ExpenseCategory.health.name: "Health",
@@ -57,13 +57,13 @@ final Map<String, IconData> inCategoryIcons = {
   IncomeCategory.service.name: FontAwesomeIcons.screwdriverWrench,
   IncomeCategory.soldProperty.name: FontAwesomeIcons.arrowsRotate
 };
-// dateFmt for formate date day/month/year
+///dateFmt for formate date day/month/year
 String dateFmt(DateTime d) {
   return "${d.day}/${d.month}/${d.year}";
 }
 
-//totalExp
-//get total amount in the list of Expense
+///totalExp
+///get total amount in the list of Expense
 double totalExp(List<Expense> data) {
   double total = 0.0;
   for (final e in data) {
@@ -72,7 +72,7 @@ double totalExp(List<Expense> data) {
   return total;
 }
 
-//getDayInMonth return how many days in a month
+///getDayInMonth return how many days in a month
 int getDayInMonth(int month, int year) {
   int days = 0;
   switch (month) {
@@ -120,7 +120,7 @@ int getDayInMonth(int month, int year) {
   return days;
 }
 
-//getInititalIndex return DateType index for button toggle
+///getInititalIndex return DateType index for button toggle
 int getInititalIndex(DateType dt) {
   switch (dt) {
     case DateType.week:
@@ -134,8 +134,8 @@ int getInititalIndex(DateType dt) {
   }
 }
 
-//weekLineBarData return Map<double,double> for chart in a week
-//example {0:1000,1:2000,2:3000}
+///weekLineBarData return Map<double,double> for chart in a week
+///example {0:1000,1:2000,2:3000}
 Map<double, double> weekLineBarData(
     List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> weeklyData = {};
@@ -147,8 +147,8 @@ Map<double, double> weekLineBarData(
   }
   return weeklyData;
 }
-//weekLineBarData return Map<double,double> for chart in a month
-//example {0:1000,1:2000,2:3000}
+///weekLineBarData return Map<double,double> for chart in a month
+///example {0:1000,1:2000,2:3000}
 Map<double, double> monthLineBarData(
     List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> monthData = {};
@@ -161,8 +161,8 @@ Map<double, double> monthLineBarData(
   }
   return monthData;
 }
-//weekLineBarData return Map<double,double> for chart in a year
-//example {0:1000,1:2000,2:3000}
+///weekLineBarData return Map<double,double> for chart in a year
+///example {0:1000,1:2000,2:3000}
 Map<double, double> yearLineBarData(
     List<Budget> data, DateTime date, Currency currency) {
   final Map<double, double> yearData = {};
@@ -174,9 +174,9 @@ Map<double, double> yearLineBarData(
   }
   return yearData;
 }
-/*getBalance  return String for balance
-if balance is large amount
-*/
+///getBalance  return String for balance
+/// that is large amount
+/// formatting like (1M,1B,1T)
 String getBalance(double amount) {
   if (amount > 1000000 && amount < 1000000000) {
     return "${(amount / 1000000).toStringAsFixed(3)} M";
@@ -188,8 +188,8 @@ String getBalance(double amount) {
     return "$amount";
   }
 }
-//getTotalBudget 
-//return total balance in (week,month,year)
+///getTotalBudget 
+///return total balance in (week,month,year)
 double getTotalBudget(BudgetCalc budgetCalc, DateType dt, DateTime date) {
   double total = 0.0;
   switch (dt) {
@@ -207,8 +207,8 @@ double getTotalBudget(BudgetCalc budgetCalc, DateType dt, DateTime date) {
   }
   return total;
 }
-//dateInWeek
-//return list of date in a week choose by d (argument)
+///dateInWeek
+///return list of date in a week choose by d (argument)
 List<DateTime> dateInWeek(DateTime d) {
   List<DateTime> week = [];
   switch (d.weekday) {
@@ -267,8 +267,8 @@ List<DateTime> dateInWeek(DateTime d) {
   }
   return week;
 }
-//yearBottomTitleWidgets
-//return Title widget for chart
+///yearBottomTitleWidgets
+///return Title widget for chart
 Widget yearBottomTitleWidgets(double value, TitleMeta meta) {
   const style = TextStyle(
       color: Color(0xff68737d),

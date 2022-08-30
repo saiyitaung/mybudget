@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/ui/categorydetail.dart';
+import 'package:mybudget/ui/edit.dart';
 import 'package:mybudget/ui/newexp.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
@@ -21,7 +23,8 @@ class ExpenseUI extends ConsumerWidget {
     final exps = ref.watch(expStateProvider);
     final selectedDateType = ref.watch(dateTypeChangeNotifierProvider);
     final selectedDate = ref.watch(dateStateNotifier);
-    final budgetCalc = BudgetCalc<Expense>(exps,ref.watch(currencyChangeNotifier).currency);
+    final budgetCalc =
+        BudgetCalc<Expense>(exps, ref.watch(currencyChangeNotifier).currency);
     final total = getTotalBudget(budgetCalc, selectedDateType, selectedDate);
     debugPrint("rebuild $selectedDateType");
     return Scaffold(
@@ -51,7 +54,7 @@ class ExpenseUI extends ConsumerWidget {
                         child: Row(
                       children: [
                         Text(
-                          " ${getBalance(budgetCalc.totalInWeek(selectedDate))}",
+                          " ${getBalance(getTotalBudget(budgetCalc, selectedDateType, selectedDate))}",
                           style: TextStyle(
                               fontFamily: "meriendaone",
                               fontSize: 24,
@@ -82,6 +85,7 @@ class ExpenseUI extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(.7),
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: ((context) => NewExpUI())));
@@ -95,22 +99,29 @@ class ExpenseUI extends ConsumerWidget {
   List<Widget> sliverChild(BuildContext context, WidgetRef ref,
       DateType selectedDateType, List<Expense> exps) {
     Map<double, double> lineBarData = {};
-    final budgetCal = BudgetCalc<Expense>(exps,ref.watch(currencyChangeNotifier).currency);
+    final budgetCal =
+        BudgetCalc<Expense>(exps, ref.watch(currencyChangeNotifier).currency);
     debugPrint("total week : ${budgetCal.totalInWeek(DateTime.now())}");
     List<Widget> childs = [];
     debugPrint("${selectedDateType}");
     switch (selectedDateType) {
       case DateType.week:
         lineBarData = weekLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(expStateProvider),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.month:
         lineBarData = monthLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(expStateProvider),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.year:
         lineBarData = yearLineBarData(
-            ref.watch(expStateProvider), ref.watch(dateStateNotifier),ref.watch(currencyChangeNotifier).currency);
+            ref.watch(expStateProvider),
+            ref.watch(dateStateNotifier),
+            ref.watch(currencyChangeNotifier).currency);
         break;
       case DateType.day:
         break;
@@ -180,16 +191,42 @@ class ExpenseUI extends ConsumerWidget {
       default:
         break;
     }
+    expList.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
     exps.isEmpty
         ? childs.add(EmptyInfoUI())
         : childs.addAll(
             expList.map(
-              (e) => BudgetItem(
+              (e) => Slidable(
+                endActionPane: ActionPane(
+                  extentRatio: .3,
+                  children: [
+                    SlidableAction(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      onPressed: (context) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Edit<Expense>(t: e),));
+                      },
+                      icon: Icons.edit,
+                      foregroundColor: Colors.green,
+                    ),
+                    SlidableAction(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      onPressed: (context) {
+                        ref.watch(expStateProvider.notifier).remove(e);
+                      },
+                      foregroundColor: Colors.red,
+                      icon: Icons.delete_forever_sharp,
+                    ),
+                  ],
+                  motion: const ScrollMotion(),
+                ),
+                child: BudgetItem(
                   icondata: expCategoryIcons[e.expCategory]!,
                   iconbgColor: expCategoryColors[e.expCategory]!,
                   title: e.detail,
                   date: dateFmt(e.timeStamp),
-                  amount: getBalance(e.amount)),
+                  amount: getBalance(e.amount),
+                ),
+              ),
             ),
           );
     return childs;

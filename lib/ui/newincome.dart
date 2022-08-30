@@ -19,15 +19,16 @@ class NewIncomeUI extends HookWidget {
     var selectedCurrency = Currency.mmk;
     var selectedCategory = IncomeCategory.salary;
     return Scaffold(
-      appBar: AppBar(title: Text("New Income")),
+      appBar: AppBar(title: const Text("New Income")),
       body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text("Currency"),
+              const Text("Currency"),
               SizedBox(
                 height: 50,
                 width: 200,
@@ -44,23 +45,24 @@ class NewIncomeUI extends HookWidget {
                       iconEnabledColor: Colors.white70,
                       items: currencies
                           .map((e) => DropdownMenuItem(
-                                child: Text(e.name.toString()),
                                 value: e,
+                                child: Text(e.name.toString()),
                               ))
                           .toList(),
                       value: selected.currency,
-                      selectedItemBuilder: ((context) => currencies
-                          .map((e) => Container(
-                                child: Text(
-                                  "${e.name}",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                padding: EdgeInsets.only(
-                                  left: 20,
-                                ),
-                                alignment: Alignment.centerLeft,
-                              ))
-                          .toList()),
+                      selectedItemBuilder: ((context) => currencies.map((e) {
+                            var textStyle = const TextStyle(color: Colors.white);
+                            return Container(
+                              padding: const EdgeInsets.only(
+                                left: 20,
+                              ),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                e.name,
+                                style: textStyle,
+                              ),
+                            );
+                          }).toList()),
                       onChanged: (c) {
                         selected.change(c!);
                         selectedCurrency = c;
@@ -68,83 +70,97 @@ class NewIncomeUI extends HookWidget {
                 })),
               ),
             ]),
-            InputTextWidget(
-              label: "Detail",
-              type: TextInputType.text,
-              ctl: detail,
+            Consumer(
+              builder: (context, ref, child) {
+                return InputTextWidget(
+                  label: "Detail",
+                  type: TextInputType.text,
+                  ctl: detail,
+                  autoCompleteText: ref
+                      .watch(incomeStateNotifier)
+                      .map((e) => e.detail)
+                      .toList(),
+                );
+              },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             InputTextWidget(
               label: "Amount",
-              type: TextInputType.text,
+              type: TextInputType.number,
               ctl: amount,
+              autoCompleteText: [],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Consumer(builder: (context, ref, child) {
-              selectedCategory=ref.watch(inCategoryChangeNotifier).incategory;
+              selectedCategory = ref.watch(inCategoryChangeNotifier).incategory;
               return DropdownButton<IncomeCategory>(
                   isExpanded: true,
                   dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                   items: inCategories
                       .map(
                         (e) => DropdownMenuItem(
-                          child: Container(
-                              child: Row(
-                            children: [
-                              Icon(
-                                inCategoryIcons[e.name],
-                                color: Colors.green,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(e.name),
-                            ],
-                          )),
                           value: e,
+                          child: Row(
+                            children: [
+                          Icon(
+                            inCategoryIcons[e.name],
+                            color: Colors.green,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(e.name),
+                            ],
+                          ),
                         ),
                       )
                       .toList(),
                   value: ref.watch(inCategoryChangeNotifier).incategory,
                   onChanged: (v) {
-                    selectedCategory=v!;
+                    selectedCategory = v!;
                     ref.read(inCategoryChangeNotifier).change(v);
                   });
             }),
+            SizedBox(height: 10,),
             Consumer(builder: (context, ref, child) {
               final _incomeState = ref.watch(incomeStateNotifier.notifier);
               return TextButton(
                 onPressed: () {
-                  debugPrint("${detail.text} ${amount.text} $selectedCurrency");
+                  
                   var newItem = InCome(
-                      id: Uuid().v4(),
+                      id: const Uuid().v4(),
                       detail: detail.text,
-                      amount: double.parse(amount.text),
+                      amount: double.parse(amount.text == '' ? '0.0' : amount.text),
                       currency: selectedCurrency.name,
                       timeStamp: DateTime.now(),
-                      inCategory: selectedCategory.name);
-                  _incomeState.add(newItem);
-                  Navigator.pop(context);
+                      inCategory: selectedCategory.name);                  
+                  if (newItem.detail != '' && newItem.amount > 0) {
+                    _incomeState.add(newItem);
+                    Navigator.pop(context);
+                  }
                 },
                 child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Colors.white60),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: 50,
+                  alignment: Alignment.center,
                   child: const Text(
                     "save",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white),
                   ),
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  alignment: Alignment.center,
                 ),
               );
             }),
           ],
         ),
-        padding: EdgeInsets.symmetric(horizontal: 20),
       ),
     );
   }
