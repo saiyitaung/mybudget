@@ -2,7 +2,7 @@
 
 a personal budget recording app.
 
-## flutter packages that use in this projects
+## flutter packages that use in this project
  ### db
 - [hive db](https://pub.dev/packages/hive)
 - [hive flutter](https://pub.dev/packages/hive_flutter)
