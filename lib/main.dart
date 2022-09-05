@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,10 +9,10 @@ import 'package:mybudget/ui/home.dart';
 import 'package:mybudget/widgets/darktheme.dart';
 import 'package:path_provider/path_provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //android dir
-  final dataPath=await getExternalStorageDirectory();
+  final dataPath = await getExternalStorageDirectory();
   await Hive.initFlutter(dataPath!.path);
   // linux dir
   // final dir=Directory("mybudget");
@@ -24,23 +23,24 @@ void main() async{
   await Hive.openBox<Expense>("expensedb");
   await Hive.openBox<InCome>("incomedb");
   await Hive.openBox<String>("settingdb");
+
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+ 
   runApp(const ProviderScope(child: MyApp()));
+  
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   // This widget is the root of your application.
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'my budget',
-            theme: DarkTheme.darkTheme(),             
-      home:   HomePage(),
-
+      theme: DarkTheme.darkTheme(),
+      home: HomePage(),
     );
   }
 }
-
- 
- 

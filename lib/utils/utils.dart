@@ -185,7 +185,7 @@ String getBalance(double amount) {
   } else if (amount > 1000000000000 && amount < 1000000000000000) {
     return "${(amount / 1000000000).toStringAsFixed(3)}T";
   } else {
-    return "$amount";
+    return "${amount.toStringAsFixed(1)}";
   }
 }
 ///getTotalBudget 

@@ -12,7 +12,7 @@ class AboutUI extends StatelessWidget {
           Container(
             height: 200,
             alignment: Alignment.center,
-            child: Icon(
+            child: const Icon(
               Icons.info_outline_rounded,
               size: 170,
               color: Colors.teal,
@@ -20,22 +20,25 @@ class AboutUI extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            child: Text(
+            child: const Text(
               "MyBudget",
               style: TextStyle(fontSize: 30, fontFamily: 'Itim'),
             ),
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Table(
-                children: [
+                children: const [
                   TableRow(children: [Text("version"), Text("1.0")]),
                   TableRow(children: [
                     Text("developer"),
                     Text("saiyitaung@gmail.com")
                   ]),
-                  TableRow(children: [Text("detail"), Text("blah blah")]),
+                  TableRow(children: [
+                    Text("detail"),
+                    Text("personal budget recording app. just for fun")
+                  ]),
                 ],
               ),
             ),

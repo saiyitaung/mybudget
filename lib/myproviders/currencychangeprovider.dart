@@ -13,6 +13,16 @@ const currencies = [
   Currency.baht,
   Currency.yen
 ];
+final Map<Currency, String> currencySymbols = {
+  Currency.dollar: "\$",
+  Currency.yuan: "¥",
+  Currency.yen: "¥",
+  Currency.pound: "£",
+  Currency.euro: "€",
+  Currency.rupee: "₹",
+  Currency.baht: "฿",
+  Currency.mmk: ""
+};
 final Map<String, Currency> currencyFromStr = {
   Currency.mmk.name: Currency.mmk,
   Currency.yuan.name: Currency.yuan,

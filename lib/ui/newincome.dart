@@ -117,7 +117,7 @@ class NewIncomeUI extends HookWidget {
                             ],
                           ),
                         ),
-                      )
+                      ).toSet()
                       .toList(),
                   value: ref.watch(inCategoryChangeNotifier).incategory,
                   onChanged: (v) {

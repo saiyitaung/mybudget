@@ -26,6 +26,7 @@ class ExpenseUI extends ConsumerWidget {
     final budgetCalc =
         BudgetCalc<Expense>(exps, ref.watch(currencyChangeNotifier).currency);
     final total = getTotalBudget(budgetCalc, selectedDateType, selectedDate);
+    final currencyString = ref.watch(currencyChangeNotifier);
     debugPrint("rebuild $selectedDateType");
     return Scaffold(
       body: CustomScrollView(
@@ -60,18 +61,22 @@ class ExpenseUI extends ConsumerWidget {
                               fontSize: 24,
                               fontWeight: FontWeight.bold),
                         ),
-                        // Container(
-                        //   padding: EdgeInsets.only(top: 5, left: 5),
-                        //   child: Text(
-                        //     // utils.currenciesString[selectedCurrency!]!,
-                        //     getCurrencysLocale(context, selectedCurrency!),
-                        //     style: TextStyle(
-                        //       fontSize: 12,
-                        //       color: Colors.white54,
-                        //       fontFamily: "meriendaone",
-                        //     ),
-                        //   ),
-                        // ),
+                        Container(
+                          padding: EdgeInsets.only(top: 12, left: 5),
+                          child: Text(
+                            // utils.currenciesString[selectedCurrency!]!,
+                            currencyString.currency.name == "mmk"
+                                ? currencyString.currency.name.toUpperCase()
+                                : currencyString.currency.name[0]
+                                        .toUpperCase() +
+                                    currencyString.currency.name.substring(1),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white54,
+                              fontFamily: "meriendaone",
+                            ),
+                          ),
+                        ),
                       ],
                     )),
                   ],
@@ -85,7 +90,8 @@ class ExpenseUI extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(.7),
+        backgroundColor:
+            Theme.of(context).scaffoldBackgroundColor.withOpacity(.7),
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: ((context) => NewExpUI())));
@@ -201,15 +207,21 @@ class ExpenseUI extends ConsumerWidget {
                   extentRatio: .3,
                   children: [
                     SlidableAction(
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       onPressed: (context) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Edit<Expense>(t: e),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Edit<Expense>(t: e),
+                            ));
                       },
                       icon: Icons.edit,
                       foregroundColor: Colors.green,
                     ),
                     SlidableAction(
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       onPressed: (context) {
                         ref.watch(expStateProvider.notifier).remove(e);
                       },

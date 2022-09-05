@@ -57,7 +57,7 @@ class Edit<T extends Budget> extends HookWidget {
             height: 10,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text("Currency"),
+            const Text("Currency"),
             SizedBox(
               height: 50,
               width: 200,
@@ -81,12 +81,11 @@ class Edit<T extends Budget> extends HookWidget {
                     value: selectedCurrency,
                     selectedItemBuilder: ((context) => currencies
                         .map((e) => Container(
-                             
                               padding: const EdgeInsets.only(
                                 left: 20,
                               ),
                               alignment: Alignment.centerLeft,
-                               child: Text(
+                              child: Text(
                                 e.name,
                                 style: TextStyle(color: Colors.white),
                               ),
@@ -99,7 +98,7 @@ class Edit<T extends Budget> extends HookWidget {
               })),
             ),
           ]),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           t is Expense
@@ -113,7 +112,6 @@ class Edit<T extends Budget> extends HookWidget {
                       items: expCategories
                           .map(
                             (e) => DropdownMenuItem(
-                              
                               value: e,
                               child: SizedBox(
                                 child: Row(children: [
@@ -121,7 +119,7 @@ class Edit<T extends Budget> extends HookWidget {
                                     expCategoryIcons[e.name],
                                     color: expCategoryColors[e.name],
                                   ),
-                                 const SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(categoriesString[e.name]!)
@@ -144,18 +142,17 @@ class Edit<T extends Budget> extends HookWidget {
                       items: inCategories
                           .map(
                             (e) => DropdownMenuItem(
-                              
                               value: e,
                               child: Row(
                                 children: [
-                              Icon(
-                                inCategoryIcons[e.name],
-                                color: Colors.green,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(e.name),
+                                  Icon(
+                                    inCategoryIcons[e.name],
+                                    color: Colors.green,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(e.name),
                                 ],
                               ),
                             ),
@@ -167,14 +164,17 @@ class Edit<T extends Budget> extends HookWidget {
                         ref.read(inCategoryChangeNotifier).change(v);
                       });
                 }),
-          SizedBox(height: 10,),    
+          SizedBox(
+            height: 10,
+          ),
           Consumer(builder: (context, ref, child) {
             final expState = ref.watch(expStateProvider.notifier);
             final inState = ref.watch(incomeStateNotifier.notifier);
             return TextButton(
               onPressed: () {
                 t.detail = detailCtrl.text;
-                t.amount = double.parse(amountCtrl.text == '' ? '0.0' : amountCtrl.text);
+                t.amount = double.parse(
+                    amountCtrl.text == '' ? '0.0' : amountCtrl.text);
                 t.currency = ref.watch(currencyChangeNotifier).currency.name;
                 if (t is Expense) {
                   (t as Expense).expCategory =
@@ -198,11 +198,10 @@ class Edit<T extends Budget> extends HookWidget {
                   border: Border.all(width: 1, color: Colors.white60),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 alignment: Alignment.center,
-                child:   const Text(
+                child: const Text(
                   "Update",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white),

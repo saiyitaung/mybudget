@@ -207,11 +207,14 @@ class HomeViewUI extends ConsumerWidget {
       }
     });
     listCategoryUsage.sort(((a, b) => b.amount.compareTo(a.amount)));
-
+    double total = 0.0;
+    for(final e in listCategoryUsage){
+      total +=e.amount;
+    }
     children.add(
       MyPieChart(
         categoryUsage: listCategoryUsage,
-        total: totalExp(ref.read(expStateProvider)),
+        total: total,
       ),
     );
     listCategoryUsage.isEmpty

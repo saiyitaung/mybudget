@@ -23,6 +23,7 @@ class IncomeUI extends ConsumerWidget {
     final incomeBudgetCal =
         BudgetCalc(incomes, ref.watch(currencyChangeNotifier).currency);
     final selectedDate = ref.watch(dateStateNotifier);
+    final currencyString = ref.watch(currencyChangeNotifier);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -56,18 +57,22 @@ class IncomeUI extends ConsumerWidget {
                               fontSize: 24,
                               fontWeight: FontWeight.bold),
                         ),
-                        // Container(
-                        //   padding: EdgeInsets.only(top: 5, left: 5),
-                        //   child: Text(
-                        //     // utils.currenciesString[selectedCurrency!]!,
-                        //     getCurrencysLocale(context, selectedCurrency!),
-                        //     style: TextStyle(
-                        //       fontSize: 12,
-                        //       color: Colors.white54,
-                        //       fontFamily: "meriendaone",
-                        //     ),
-                        //   ),
-                        // ),
+                        Container(
+                          padding: EdgeInsets.only(top: 12, left: 5),
+                          child: Text(
+                            // utils.currenciesString[selectedCurrency!]!,
+                            currencyString.currency.name == "mmk"
+                                ? currencyString.currency.name.toUpperCase()
+                                : currencyString.currency.name[0]
+                                        .toUpperCase() +
+                                    currencyString.currency.name.substring(1),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white54,
+                              fontFamily: "meriendaone",
+                            ),
+                          ),
+                        ),
                       ],
                     )),
                   ],
@@ -192,19 +197,25 @@ class IncomeUI extends ConsumerWidget {
         : children.addAll(
             inList.map(
               (e) => Slidable(
-                 endActionPane: ActionPane(
+                endActionPane: ActionPane(
                   extentRatio: .3,
                   children: [
                     SlidableAction(
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       onPressed: (context) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Edit<InCome>(t: e),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Edit<InCome>(t: e),
+                            ));
                       },
                       icon: Icons.edit,
                       foregroundColor: Colors.green,
                     ),
                     SlidableAction(
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       onPressed: (context) {
                         ref.watch(incomeStateNotifier.notifier).remove(e);
                       },

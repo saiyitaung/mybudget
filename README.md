@@ -1,16 +1,34 @@
 # mybudget
 
-A new Flutter project.
+a personal budget recording app.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## flutter packages that use in this projects
+ ### db
+- [hive db](https://pub.dev/packages/hive)
+- [hive flutter](https://pub.dev/packages/hive_flutter)
+- [hive_generator](https://pub.dev/packages/hive_generator) | [build_runner](https://pub.dev/packages/build_runner)
+  for generating custom hive type
+### android path
+- [path_provider](https://pub.dev/packages/path_provider)
+### chart 
+- [fl_chart](https://pub.dev/packages/fl_chart)
+### text input autocomplete
+- [flutter_typeahead](https://pub.dev/packages/flutter_typeahead)
+### state management
+- [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
+- [flutter_hooks](https://pub.dev/packages/flutter_hooks)
+### icons
+- [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter)
+### tobble switch
+- [toggle_switch](https://pub.dev/packages/toggle_switch)
+### for pick image profile
+- [image_picker](https://pub.dev/packages/image_picker)
+### for slide widget edit / delete
+- [flutter_slidable](https://pub.dev/packages/flutter_slidable)
+### for making app launcher icon
+- [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
+### for unique id
+- [uuid](https://pub.dev/packages/uuid)
+### for splash screen
+- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash)
+ 

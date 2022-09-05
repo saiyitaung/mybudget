@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mybudget/myproviders/currencychangeprovider.dart';
 
 class CardWidget extends StatelessWidget {
   final String title;
@@ -42,7 +44,37 @@ class CardWidget extends StatelessWidget {
                   title,
                   style: TextStyle(fontFamily: 'Itim', fontSize: 20),
                 ),
-                Text("$amount",style: TextStyle(fontFamily: 'meriendaone',fontSize: 22),)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Consumer(builder: ((context, ref, child) {
+                      return Text(
+                        currencySymbols[
+                            ref.watch(currencyChangeNotifier).currency]!,
+                        style:
+                            TextStyle(fontSize: 22, fontFamily: 'meriendaone'),
+                      );
+                    })),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      "$amount",
+                      style: TextStyle(fontFamily: 'meriendaone', fontSize: 22),
+                    ),
+                    SizedBox(width: 4,),
+                    Consumer(builder: (context, ref, child) {
+                      final currency=ref.watch(currencyChangeNotifier).currency.name;
+                      return Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          currency == "mmk" ?  currency.toUpperCase() :currency[0].toUpperCase() +currency.substring(1),
+                          style: TextStyle(fontSize: 11,fontStyle: FontStyle.italic,fontFamily: 'itim'),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ],
             ),
           ),

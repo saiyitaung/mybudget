@@ -36,6 +36,7 @@ class NewExpUI extends HookWidget {
                 width: 200,
                 child: Consumer(builder: ((context, ref, child) {
                   final selected = ref.watch(currencyChangeNotifier);
+                  selectedCurrency = selected.currency;
                   return DropdownButton<Currency>(
                       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                       underline: Container(
@@ -46,22 +47,21 @@ class NewExpUI extends HookWidget {
                       iconSize: 35,
                       iconEnabledColor: Colors.white70,
                       items: currencies
-                          .map((e) => DropdownMenuItem(                                
+                          .map((e) => DropdownMenuItem(
                                 value: e,
-                                child:  Text(e.name),
+                                child: Text(e.name),
                               ))
                           .toList(),
                       value: selected.currency,
                       selectedItemBuilder: ((context) => currencies
                           .map((e) => Container(
-                               
                                 padding: const EdgeInsets.only(
                                   left: 20,
                                 ),
                                 alignment: Alignment.centerLeft,
-                                 child: Text(
+                                child: Text(
                                   e.name,
-                                  style:const TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ))
                           .toList()),
@@ -78,7 +78,7 @@ class NewExpUI extends HookWidget {
                 type: TextInputType.text,
                 ctl: detail,
                 autoCompleteText:
-                    ref.watch(expStateProvider).map((e) => e.detail).toList(),
+                    ref.watch(expStateProvider).map((e) => e.detail).toSet().toList(),
               );
             }),
             const SizedBox(
@@ -104,7 +104,6 @@ class NewExpUI extends HookWidget {
                 items: expCategories
                     .map(
                       (e) => DropdownMenuItem(
-                        
                         value: e,
                         child: Row(children: [
                           Icon(
@@ -127,7 +126,7 @@ class NewExpUI extends HookWidget {
                 selectedItemBuilder: (context) => expCategories
                     .map(
                       (e) => Container(
-                        padding: const EdgeInsets.only(left:10),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Row(children: [
                           Icon(
                             expCategoryIcons[e.name],
@@ -149,17 +148,18 @@ class NewExpUI extends HookWidget {
             Consumer(builder: (context, ref, child) {
               final expState = ref.watch(expStateProvider.notifier);
               return TextButton(
-                onPressed: () {                  
+                onPressed: () {
                   final e = Expense(
                       id: const Uuid().v4(),
                       detail: detail.text,
-                      amount: double.parse(amount.text == '' ? '0.0' : amount.text),
+                      amount:
+                          double.parse(amount.text == '' ? '0.0' : amount.text),
                       timeStamp: DateTime.now(),
                       currency: selectedCurrency.name,
-                      expCategory: selectedCategory.name);                  
-                  if(e.detail != '' && e.amount > 0){
+                      expCategory: selectedCategory.name);
+                  if (e.detail != '' && e.amount > 0) {
                     expState.add(e);
-                     Navigator.pop(context);
+                    Navigator.pop(context);
                   }
                 },
                 child: Container(
