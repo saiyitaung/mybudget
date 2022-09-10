@@ -154,7 +154,7 @@ Map<double, double> monthLineBarData(
   final Map<double, double> monthData = {};
   final budgetCal = BudgetCalc(data, currency);
   double index = 0;
-  for (int day = 1; day < getDayInMonth(date.month, date.year); day++) {
+  for (int day = 1; day <= getDayInMonth(date.month, date.year); day++) {
     monthData[index] =
         budgetCal.totalInDay(DateTime(date.year, date.month, day));
     index++;
@@ -465,4 +465,16 @@ Widget weekbottomTitleWidgets(double value, TitleMeta meta) {
     space: 3.0,
     child: text,
   );
+}
+Color getUsagesColor(double amount,double total){
+  double h =total /2;
+  if(amount >= h){
+    return Colors.red;
+  }else if(amount >= (total/3)){
+    return Colors.redAccent;
+  }else if (amount >= (total/4)){
+    return Colors.yellow;
+  }else{
+    return Colors.yellow.withOpacity(.6);
+  }
 }

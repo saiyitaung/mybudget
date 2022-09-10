@@ -143,8 +143,10 @@ class HomeViewUI extends ConsumerWidget {
             Flexible(
               flex: 1,
               child: InkWell(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ExpenseUI())),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ExpenseUI())),
                   child: Stack(
                     children: [
                       Center(
@@ -208,8 +210,8 @@ class HomeViewUI extends ConsumerWidget {
     });
     listCategoryUsage.sort(((a, b) => b.amount.compareTo(a.amount)));
     double total = 0.0;
-    for(final e in listCategoryUsage){
-      total +=e.amount;
+    for (final e in listCategoryUsage) {
+      total += e.amount;
     }
     children.add(
       MyPieChart(
@@ -240,7 +242,7 @@ class HomeViewUI extends ConsumerWidget {
                 amount: getBalance(e.amount),
                 date: '',
                 showSub: false,
-                title: e.category,
+                title: categoriesString[e.category]!,
               ),
             )));
     return children;

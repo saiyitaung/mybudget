@@ -111,9 +111,18 @@ class LineChartUI extends StatelessWidget {
     case 1000:
       text = "1K";
       break;
+    case 2000:
+    text="2K";
+    break;
+    case 3000:
+    text ="3K";
+    break;
     case 5000:
       text = "5K";
       break;
+    case 8000:
+    text="8K";
+    break;
     case 10000:
       text = "10K";
       break;

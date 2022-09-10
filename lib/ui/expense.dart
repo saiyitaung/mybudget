@@ -11,6 +11,7 @@ import 'package:mybudget/ui/newexp.dart';
 import 'package:mybudget/utils/budgetcal.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
+import 'package:mybudget/widgets/confirmdialog.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/linechart.dart';
@@ -96,7 +97,7 @@ class ExpenseUI extends ConsumerWidget {
           Navigator.push(
               context, MaterialPageRoute(builder: ((context) => NewExpUI())));
         },
-        child: Icon(Icons.add),
+        child:const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -223,7 +224,13 @@ class ExpenseUI extends ConsumerWidget {
                       backgroundColor:
                           Theme.of(context).scaffoldBackgroundColor,
                       onPressed: (context) {
-                        ref.watch(expStateProvider.notifier).remove(e);
+                        showDialog(
+                            context: context,
+                            builder: ((context) => ConfirmDialog())).then((value) {
+                          if (value != null && value) {
+                            ref.watch(expStateProvider.notifier).remove(e);
+                          }
+                        });
                       },
                       foregroundColor: Colors.red,
                       icon: Icons.delete_forever_sharp,

@@ -30,7 +30,7 @@ class AboutUI extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Table(
                 children: const [
-                  TableRow(children: [Text("version"), Text("1.0")]),
+                  TableRow(children: [Text("version"), Text("1.1")]),
                   TableRow(children: [
                     Text("developer"),
                     Text("saiyitaung@gmail.com")

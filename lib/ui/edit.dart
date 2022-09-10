@@ -36,10 +36,10 @@ class Edit<T extends Budget> extends HookWidget {
                 type: TextInputType.name,
                 ctl: detailCtrl,
                 autoCompleteText: t is Expense
-                    ? ref.watch(expStateProvider).map((e) => e.detail).toList()
+                    ? ref.watch(expStateProvider).map((e) => e.detail).toSet().toList()
                     : ref
                         .watch(incomeStateNotifier)
-                        .map((e) => e.detail)
+                        .map((e) => e.detail).toSet()
                         .toList(),
               );
             },

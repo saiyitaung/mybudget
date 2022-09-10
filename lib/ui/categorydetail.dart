@@ -1,5 +1,7 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
@@ -7,6 +9,7 @@ import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/categorydetaillinechart.dart';
+import 'package:mybudget/widgets/mypiechart.dart';
 
 class CategoryDetailUI extends ConsumerWidget {
   final String title;
@@ -22,7 +25,7 @@ class CategoryDetailUI extends ConsumerWidget {
       backgroundColor: Color(0xff232d37),
       body: CustomScrollView(slivers: [
         SliverAppBar(
-          title: Text(" Expense"),
+          title: Text(title,style: TextStyle(fontFamily: "itim"),),
           backgroundColor: Color(0xff232d37),
           pinned: true,
           expandedHeight: 120,
@@ -53,22 +56,21 @@ class CategoryDetailUI extends ConsumerWidget {
                       ),
                     ],
                   )),
-                     Container(
-                          padding: EdgeInsets.only(top: 12, left: 5),
-                          child: Text(
-                            // utils.currenciesString[selectedCurrency!]!,
-                            currencyString.currency.name == "mmk"
-                                ? currencyString.currency.name.toUpperCase()
-                                : currencyString.currency.name[0]
-                                        .toUpperCase() +
-                                    currencyString.currency.name.substring(1),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white54,
-                              fontFamily: "meriendaone",
-                            ),
-                          ),
-                     ),
+                  Container(
+                    padding: EdgeInsets.only(top: 12, left: 5),
+                    child: Text(
+                      // utils.currenciesString[selectedCurrency!]!,
+                      currencyString.currency.name == "mmk"
+                          ? currencyString.currency.name.toUpperCase()
+                          : currencyString.currency.name[0].toUpperCase() +
+                              currencyString.currency.name.substring(1),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white54,
+                        fontFamily: "meriendaone",
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -105,7 +107,7 @@ class CategoryDetailUI extends ConsumerWidget {
         break;
     }
     List<Widget> children = [];
-
+    children.add(SizedBox(height: 10,));
     children.add(
       CategoryDetailLineChartUI(
         gradientColors: const [Colors.red, Colors.redAccent],
@@ -113,6 +115,14 @@ class CategoryDetailUI extends ConsumerWidget {
         bardata: lineBarData,
       ),
     );
+    children.add(SizedBox(height: 10,));
+    List<CategoryUsage> categoryUsage =[];
+    double total = 0.0;
+    totalByDetail(filteredExpense).forEach((key, value){
+      total +=value;
+      categoryUsage.add(CategoryUsage(key, value));
+    });
+    children.add(MyPieChart(categoryUsage: categoryUsage, total: total,showIcon: false,));
     filteredExpense.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
     children.addAll(filteredExpense.map((e) => BudgetItem(
         icondata: expCategoryIcons[e.expCategory]!,
@@ -121,5 +131,15 @@ class CategoryDetailUI extends ConsumerWidget {
         date: dateFmt(e.timeStamp),
         amount: getBalance(e.amount))));
     return children;
+  }
+
+  Map<String, double> totalByDetail(
+    List<Expense> data,
+  ) {
+    final Map<String, double> detailUsage = {};
+    for (final e in data) {
+      detailUsage[e.detail] = (detailUsage[e.detail] ?? 0.0) + e.amount;
+    }
+    return detailUsage;
   }
 }
