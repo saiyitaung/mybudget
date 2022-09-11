@@ -47,7 +47,7 @@ class MyPieChart extends StatelessWidget {
                           : Text(e.category,style: TextStyle(fontSize: 20,fontFamily: 'itim'),),
                       badgePositionPercentageOffset: showIcon ? .98 :1.1,                     
                       radius: 90,
-                      titlePositionPercentageOffset: (e.amount /total) ==1 ? .2 :.5,
+                      titlePositionPercentageOffset: showIcon ? .5 :.25,
                       value: e.amount,
                       title: showIcon
                           ? "${((e.amount / total) * 100).toStringAsFixed(1)}%"

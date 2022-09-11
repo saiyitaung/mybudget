@@ -199,7 +199,7 @@ class ExpenseUI extends ConsumerWidget {
         break;
     }
     expList.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
-    exps.isEmpty
+    expList.isEmpty
         ? childs.add(EmptyInfoUI())
         : childs.addAll(
             expList.map(

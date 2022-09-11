@@ -213,14 +213,14 @@ class HomeViewUI extends ConsumerWidget {
     for (final e in listCategoryUsage) {
       total += e.amount;
     }
-    children.add(
+    listCategoryUsage.isEmpty ? children.add(EmptyInfoUI()) :children.add(
       MyPieChart(
         categoryUsage: listCategoryUsage,
         total: total,
       ),
     );
     listCategoryUsage.isEmpty
-        ? children.add(EmptyInfoUI())
+        ? children.add(const SizedBox())
         : children.addAll(listCategoryUsage.map((e) => InkWell(
               onTap: () {
                 Navigator.push(

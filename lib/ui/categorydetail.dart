@@ -10,6 +10,7 @@ import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/categorydetaillinechart.dart';
 import 'package:mybudget/widgets/mypiechart.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class CategoryDetailUI extends ConsumerWidget {
   final String title;
@@ -25,7 +26,10 @@ class CategoryDetailUI extends ConsumerWidget {
       backgroundColor: Color(0xff232d37),
       body: CustomScrollView(slivers: [
         SliverAppBar(
-          title: Text(title,style: TextStyle(fontFamily: "itim"),),
+          title: Text(
+            title,
+            style: TextStyle(fontFamily: "itim"),
+          ),
           backgroundColor: Color(0xff232d37),
           pinned: true,
           expandedHeight: 120,
@@ -107,7 +111,9 @@ class CategoryDetailUI extends ConsumerWidget {
         break;
     }
     List<Widget> children = [];
-    children.add(SizedBox(height: 10,));
+    children.add(SizedBox(
+      height: 10,
+    ));
     children.add(
       CategoryDetailLineChartUI(
         gradientColors: const [Colors.red, Colors.redAccent],
@@ -115,21 +121,51 @@ class CategoryDetailUI extends ConsumerWidget {
         bardata: lineBarData,
       ),
     );
-    children.add(SizedBox(height: 10,));
-    List<CategoryUsage> categoryUsage =[];
+    children.add(SizedBox(
+      height: 10,
+    ));
+    List<CategoryUsage> categoryUsage = [];
     double total = 0.0;
-    totalByDetail(filteredExpense).forEach((key, value){
-      total +=value;
+    totalByDetail(filteredExpense).forEach((key, value) {
+      total += value;
       categoryUsage.add(CategoryUsage(key, value));
     });
-    children.add(MyPieChart(categoryUsage: categoryUsage, total: total,showIcon: false,));
-    filteredExpense.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
-    children.addAll(filteredExpense.map((e) => BudgetItem(
-        icondata: expCategoryIcons[e.expCategory]!,
-        iconbgColor: expCategoryColors[e.expCategory]!,
-        title: e.detail,
-        date: dateFmt(e.timeStamp),
-        amount: getBalance(e.amount))));
+    categoryUsage.sort((a, b) => b.amount.compareTo(a.amount));
+    children.add(Container(
+      child: Text("Common Usage",style: TextStyle(fontFamily: 'itim',fontSize: 22),),
+      alignment: Alignment.center,
+    ));
+    children.addAll(categoryUsage
+        .map((e) => ListTile(
+              title: Padding(
+                  child: Text(
+                    "${e.category}",
+                    style: TextStyle(fontFamily: 'itim', fontSize: 22),
+                  ),
+                  padding: EdgeInsets.only(left: 11)),
+              trailing: Text("${getBalance(e.amount)}"),
+              subtitle: LinearPercentIndicator(
+                barRadius: Radius.circular(10),
+                lineHeight: 14,
+                center: Text("${((e.amount / total) * 100).toStringAsFixed(1)}%",style: TextStyle(color: Colors.black),),
+                percent: e.amount / total,
+                progressColor: Colors.redAccent,
+              ),
+            ))
+        .toList());
+        children.add(Divider());
+    // children.add(MyPieChart(
+    //   categoryUsage: categoryUsage,
+    //   total: total,
+    //   showIcon: false,
+    // ));
+    // filteredExpense.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
+    // children.addAll(filteredExpense.map((e) => BudgetItem(
+    //     icondata: expCategoryIcons[e.expCategory]!,
+    //     iconbgColor: expCategoryColors[e.expCategory]!,
+    //     title: e.detail,
+    //     date: dateFmt(e.timeStamp),
+    //     amount: getBalance(e.amount))));
     return children;
   }
 

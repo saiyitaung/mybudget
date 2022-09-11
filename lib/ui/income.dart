@@ -193,7 +193,7 @@ class IncomeUI extends ConsumerWidget {
         break;
     }
     inList.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
-    incomes.isEmpty
+    inList.isEmpty
         ? children.add(EmptyInfoUI())
         : children.addAll(
             inList.map(
