@@ -44,7 +44,7 @@ dependencies:
   flutter_typeahead: ^4.0.0
   flutter_hooks: ^0.18.5+1
   font_awesome_flutter: ^10.1.0
-  flutter_native_splash: ^2.2.8
+  #flutter_native_splash: ^2.2.8
   toggle_switch: ^2.0.1
   uuid: ^3.0.6
   image_picker: ^0.8.5+3
@@ -52,6 +52,7 @@ dependencies:
   flutter_launcher_icons: ^0.10.0
   lottie: ^1.4.2
   percent_indicator: ^4.2.2
+
   
 
 dev_dependencies:
@@ -84,6 +85,7 @@ flutter:
     - img/applogo.png
     - img/bg.png
     - lottiefile/no-data.json
+    - lottiefile/loading-finance-app.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

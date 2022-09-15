@@ -1,5 +1,5 @@
 
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +7,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mybudget/entities/budget.dart';
 import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/entities/income.dart';
-import 'package:mybudget/ui/home.dart';
+// import 'package:mybudget/ui/home.dart';
+import 'package:mybudget/ui/splashscreen.dart';
 import 'package:mybudget/widgets/darktheme.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'my budget',
       theme: DarkTheme.darkTheme(),
-      home: HomePage(),
+      home:const SplashScreenUI(),
     );
   }
 }

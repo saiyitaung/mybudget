@@ -29,8 +29,6 @@ a personal budget recording app.
 - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
 ### for unique id
 - [uuid](https://pub.dev/packages/uuid)
-### for splash screen
-- [flutter_native_splash](https://pub.dev/packages/flutter_native_splash)
 ### lottie
 - [lottie](https://pub.dev/packages/lottie)
 ### percentage indicator
