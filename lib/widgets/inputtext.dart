@@ -27,10 +27,10 @@ class InputTextWidget extends StatelessWidget {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10)))),
         noItemsFoundBuilder: (context) {
-          return SizedBox();
+          return const SizedBox();
         },
         loadingBuilder: (c) {
-          return SizedBox();
+          return const SizedBox();
         },
         suggestionsCallback: (str) {
           List<String> matches = <String>[];

@@ -5,9 +5,11 @@ import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/income.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
+import 'package:mybudget/utils/localecurrency.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/inputtext.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewIncomeUI extends HookWidget {
   const NewIncomeUI({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class NewIncomeUI extends HookWidget {
     var selectedCurrency = Currency.mmk;
     var selectedCategory = IncomeCategory.salary;
     return Scaffold(
-      appBar: AppBar(title: const Text("New Income")),
+      appBar: AppBar(title:   Text("${AppLocalizations.of(context)?.newin}")),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -28,7 +30,7 @@ class NewIncomeUI extends HookWidget {
               height: 10,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text("Currency"),
+               Text(AppLocalizations.of(context)?.currency ?? " " ),
               SizedBox(
                 height: 50,
                 width: 200,
@@ -46,7 +48,7 @@ class NewIncomeUI extends HookWidget {
                       items: currencies
                           .map((e) => DropdownMenuItem(
                                 value: e,
-                                child: Text(e.name.toString()),
+                                child: Text(getCurrencyLocale(context, e)),
                               ))
                           .toList(),
                       value: selected.currency,
@@ -58,7 +60,7 @@ class NewIncomeUI extends HookWidget {
                               ),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                e.name,
+                                getCurrencyLocale(context, e),
                                 style: textStyle,
                               ),
                             );
@@ -73,7 +75,7 @@ class NewIncomeUI extends HookWidget {
             Consumer(
               builder: (context, ref, child) {
                 return InputTextWidget(
-                  label: "Detail",
+                  label: AppLocalizations.of(context)?.detail ?? " " ,
                   type: TextInputType.text,
                   ctl: detail,
                   autoCompleteText: ref
@@ -87,7 +89,7 @@ class NewIncomeUI extends HookWidget {
               height: 10,
             ),
             InputTextWidget(
-              label: "Amount",
+              label: AppLocalizations.of(context)?.amount ?? " ",
               type: TextInputType.number,
               ctl: amount,
               autoCompleteText: [],
@@ -113,7 +115,7 @@ class NewIncomeUI extends HookWidget {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(e.name),
+                          Text(getCategoryLocal(context, e.name)),
                             ],
                           ),
                         ),
@@ -125,12 +127,11 @@ class NewIncomeUI extends HookWidget {
                     ref.read(inCategoryChangeNotifier).change(v);
                   });
             }),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Consumer(builder: (context, ref, child) {
               final _incomeState = ref.watch(incomeStateNotifier.notifier);
               return TextButton(
-                onPressed: () {
-                  
+                onPressed: () {                  
                   var newItem = InCome(
                       id: const Uuid().v4(),
                       detail: detail.text,
@@ -151,10 +152,10 @@ class NewIncomeUI extends HookWidget {
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   alignment: Alignment.center,
-                  child: const Text(
-                    "save",
+                  child:Text(
+                    "${AppLocalizations.of(context)?.save}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               );

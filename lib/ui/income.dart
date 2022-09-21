@@ -5,6 +5,7 @@ import 'package:mybudget/entities/income.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
+import 'package:mybudget/myproviders/localeprovider.dart';
 import 'package:mybudget/ui/edit.dart';
 import 'package:mybudget/ui/newincome.dart';
 import 'package:mybudget/utils/budgetcal.dart';
@@ -14,8 +15,7 @@ import 'package:mybudget/widgets/confirmdialog.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/linechart.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class IncomeUI extends ConsumerWidget {
   const IncomeUI({Key? key}) : super(key: key);
   @override
@@ -29,21 +29,21 @@ class IncomeUI extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: Text(" Income"),
-            backgroundColor: Color(0xff232d37),
+            title: Text(AppLocalizations.of(context)?.income ?? "" ),
+            backgroundColor: const Color(0xff232d37),
             pinned: true,
             expandedHeight: 120,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 width: double.infinity,
-                padding: EdgeInsets.only(top: 80),
+                padding: const EdgeInsets.only(top: 80),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                         child: Text(
-                      "Total ",
-                      style: TextStyle(
+                      "${AppLocalizations.of(context)?.total} ",
+                      style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           fontFamily: "itim"),
@@ -53,7 +53,7 @@ class IncomeUI extends ConsumerWidget {
                       children: [
                         Text(
                           "${getBalance(getTotalBudget(incomeBudgetCal, ref.watch(dateTypeChangeNotifierProvider), selectedDate))}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: "meriendaone",
                               fontSize: 24,
                               fontWeight: FontWeight.bold),
@@ -67,7 +67,7 @@ class IncomeUI extends ConsumerWidget {
                                 : currencyString.currency.name[0]
                                         .toUpperCase() +
                                     currencyString.currency.name.substring(1),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white54,
                               fontFamily: "meriendaone",
@@ -89,9 +89,9 @@ class IncomeUI extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => NewIncomeUI())));
+              MaterialPageRoute(builder: ((context) => const NewIncomeUI())));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -125,7 +125,7 @@ class IncomeUI extends ConsumerWidget {
     List<Widget> children = [];
     children.add(
       LineChartUI(
-        gradientColors: [Colors.green, Colors.greenAccent],
+        gradientColors: const [Colors.green, Colors.greenAccent],
         bardata: lineBarData,
         dateType: ref.watch(dateTypeChangeNotifierProvider),
       ),
@@ -138,11 +138,11 @@ class IncomeUI extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
+              padding: const EdgeInsets.only(left: 20),
               child: Text(
-                "Activities",
-                style: TextStyle(fontFamily: "itim", fontSize: 28),
+                "${AppLocalizations.of(context)?.activities}",
+                style: TextStyle(fontFamily: "itim", fontSize: ref.watch(localChangeProvider).currentLocal.languageCode =="my" ? 18:28 ),
               ),
-              padding: EdgeInsets.only(left: 20),
             ),
             Container(
                 height: 30,
@@ -163,8 +163,8 @@ class IncomeUI extends ConsumerWidget {
                           }
                         });
                       },
-                      icon: Icon(Icons.calendar_month),
-                      padding: EdgeInsets.only(bottom: 2),
+                      icon: const Icon(Icons.calendar_month),
+                      padding: const EdgeInsets.only(bottom: 2),
                     ),
                     DateToggle(
                         selectedDateType:
@@ -200,6 +200,7 @@ class IncomeUI extends ConsumerWidget {
               (e) => Slidable(
                 endActionPane: ActionPane(
                   extentRatio: .3,
+                  motion: const ScrollMotion(),
                   children: [
                     SlidableAction(
                       backgroundColor:
@@ -228,7 +229,6 @@ class IncomeUI extends ConsumerWidget {
                       icon: Icons.delete_forever_sharp,
                     ),
                   ],
-                  motion: const ScrollMotion(),
                 ),
                 child: BudgetItem(
                     icondata: inCategoryIcons[e.inCategory]!,

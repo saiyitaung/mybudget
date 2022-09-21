@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
@@ -44,7 +43,7 @@ class MyPieChart extends StatelessWidget {
                                 color: expCategoryColors[e.category],
                               ),
                             )
-                          : Text(e.category,style: TextStyle(fontSize: 20,fontFamily: 'itim'),),
+                          : Text(e.category,style: const TextStyle(fontSize: 20,fontFamily: 'itim'),),
                       badgePositionPercentageOffset: showIcon ? .98 :1.1,                     
                       radius: 90,
                       titlePositionPercentageOffset: showIcon ? .5 :.25,

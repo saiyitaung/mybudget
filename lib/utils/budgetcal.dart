@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:mybudget/entities/budget.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import './utils.dart';
@@ -59,7 +58,7 @@ class BudgetCalc<T extends Budget> {
           continue;
         }
         if (v.timeStamp.day == date.day && v.currency == currencyType.name) {
-          debugPrint("${v.detail} , ${v.currency}");
+         // debugPrint("${v.detail} , ${v.currency}");
           weekly.add(v);
         }
       }

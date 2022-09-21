@@ -9,7 +9,7 @@ class LineChartUI extends StatelessWidget {
   final DateType dateType;
   final List<Color> gradientColors;
 
-  LineChartUI(
+  const LineChartUI(
       {Key? key,
       required this.gradientColors,
       required this.bardata,
@@ -31,7 +31,7 @@ class LineChartUI extends StatelessWidget {
               const EdgeInsets.only(top: 24, bottom: 12, left: 10, right: 15),
           child: LineChart(
             mainData(),
-            swapAnimationDuration: Duration(milliseconds: 350),
+            swapAnimationDuration: const Duration(milliseconds: 350),
             swapAnimationCurve: Curves.bounceInOut,
           ),
         ),

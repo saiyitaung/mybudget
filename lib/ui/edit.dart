@@ -9,9 +9,10 @@ import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/expcategoryprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/myproviders/incomeprovider.dart';
+import 'package:mybudget/utils/localecurrency.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/inputtext.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class Edit<T extends Budget> extends HookWidget {
   final T t;
   const Edit({Key? key, required this.t}) : super(key: key);
@@ -22,7 +23,7 @@ class Edit<T extends Budget> extends HookWidget {
     var selectedCurrency = currencyFromStr[t.currency] ?? Currency.mmk;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Edit")),
+      appBar: AppBar(title: Text("${AppLocalizations.of(context)?.edit}")),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(children: [
@@ -32,7 +33,7 @@ class Edit<T extends Budget> extends HookWidget {
           Consumer(
             builder: (context, ref, child) {
               return InputTextWidget(
-                label: "Detail",
+                label: "${AppLocalizations.of(context)?.detail}",
                 type: TextInputType.name,
                 ctl: detailCtrl,
                 autoCompleteText: t is Expense
@@ -48,7 +49,7 @@ class Edit<T extends Budget> extends HookWidget {
             height: 10,
           ),
           InputTextWidget(
-            label: "Amount",
+            label: "${AppLocalizations.of(context)?.amount}",
             type: TextInputType.number,
             ctl: amountCtrl,
             autoCompleteText: [],
@@ -57,7 +58,7 @@ class Edit<T extends Budget> extends HookWidget {
             height: 10,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text("Currency"),
+              Text("${AppLocalizations.of(context)?.currency}"),
             SizedBox(
               height: 50,
               width: 200,
@@ -74,7 +75,7 @@ class Edit<T extends Budget> extends HookWidget {
                     iconEnabledColor: Colors.white70,
                     items: currencies
                         .map((e) => DropdownMenuItem(
-                              child: Text(e.name.toString()),
+                              child: Text(getCurrencyLocale(context, e)),
                               value: e,
                             ))
                         .toList(),
@@ -86,7 +87,7 @@ class Edit<T extends Budget> extends HookWidget {
                               ),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                e.name,
+                                getCurrencyLocale(context, e),
                                 style: TextStyle(color: Colors.white),
                               ),
                             ))
@@ -122,7 +123,7 @@ class Edit<T extends Budget> extends HookWidget {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(categoriesString[e.name]!)
+                                  Text(getCategoryLocal(context, e.name))
                                 ]),
                               ),
                             ),
@@ -152,7 +153,7 @@ class Edit<T extends Budget> extends HookWidget {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(e.name),
+                                  Text(getCategoryLocal(context, e.name)),
                                 ],
                               ),
                             ),
@@ -201,8 +202,8 @@ class Edit<T extends Budget> extends HookWidget {
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 alignment: Alignment.center,
-                child: const Text(
-                  "Update",
+                child:   Text(
+                  "${AppLocalizations.of(context)?.update}",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white),
                 ),

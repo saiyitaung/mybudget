@@ -14,13 +14,14 @@ class _SplashScreenUIState extends State<SplashScreenUI> {
   
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     _navigateHome();
   }
   _navigateHome() async{
-    await Future.delayed(Duration(seconds: 3),(){});
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => HomePage())));
+    await Future.delayed(const Duration(seconds: 3),(){});
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 
   @override

@@ -5,11 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
+import 'package:mybudget/myproviders/localeprovider.dart';
 import 'package:mybudget/myproviders/settingprovider.dart';
 import 'package:mybudget/ui/about.dart';
+import 'package:mybudget/utils/localecurrency.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/inputtext.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingUI extends ConsumerWidget {
   const SettingUI({Key? key}) : super(key: key);
@@ -17,9 +20,9 @@ class SettingUI extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final picFile = File(ref.watch(settingProvider)["profilePic"]!);
     return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
+      appBar: AppBar(title: const Text("Profile")),
       body: Column(children: [
-        SizedBox(
+        const SizedBox(
           height: 30,
         ),
         Container(
@@ -39,7 +42,7 @@ class SettingUI extends ConsumerWidget {
                           fit: BoxFit.cover,
                           image: ref.watch(settingProvider)["profilePic"]! ==
                                   "notfound"
-                              ? AssetImage("img/profile.png")
+                              ? const AssetImage("img/profile.png")
                               : Image.file(picFile).image,
                         ),
                       ),
@@ -49,18 +52,18 @@ class SettingUI extends ConsumerWidget {
                 Center(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(100),
-                    child: Container(
+                    child: const SizedBox(
                       height: 150,
                       width: 150,
                     ),
                     onTap: () async {
-                      debugPrint("profile clicked");
+                    //  debugPrint("profile clicked");
                       final _picker = ImagePicker();
                       final pic =
                           await _picker.pickImage(source: ImageSource.gallery);
                       if (pic!.name.isNotEmpty) {
                         final dirpath = await getExternalStorageDirectory();
-                        final fullpath = dirpath!.path + "/" + pic.name;
+                        final fullpath = "${dirpath!.path}/${pic.name}";
                         final oldFile =
                             ref.watch(settingProvider)["profilePic"]!;
                         File f = File(oldFile);
@@ -86,7 +89,7 @@ class SettingUI extends ConsumerWidget {
                 ref.watch(settingProvider)["profileName"] == "notfound"
                     ? "John Doe"
                     : ref.watch(settingProvider)["profileName"]!,
-                style: TextStyle(fontSize: 28, fontFamily: 'Itim'),
+                style: const TextStyle(fontSize: 28, fontFamily: 'Itim'),
               ),
               IconButton(
                   onPressed: () async {
@@ -94,37 +97,37 @@ class SettingUI extends ConsumerWidget {
                     showDialog(
                         context: context,
                         builder: (context) => SimpleDialog(
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: const EdgeInsets.all(10),
                               backgroundColor:
                                   Theme.of(context).scaffoldBackgroundColor,
                               title: Container(
-                                child: Text(
-                                  "Change Name",
-                                  style: TextStyle(
+                                alignment: Alignment.center,
+                                child:   Text(
+                                  "${AppLocalizations.of(context)?.changeName}",
+                                  style: const TextStyle(
                                       fontFamily: 'Itim',
-                                      fontSize: 28,
+                                      fontSize: 26,
                                       color: Colors.white),
                                 ),
-                                alignment: Alignment.center,
                               ),
                               children: [
                                 InputTextWidget(
-                                    label: "Name",
+                                    label: "${AppLocalizations.of(context)?.name}",
                                     type: TextInputType.name,
                                     autoCompleteText: [],
                                     ctl: ctl),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Row(
                                   children: [
                                     Flexible(
                                       flex: 1,
-                                      child: Container(
+                                      child: SizedBox(
                                         height: 50,
                                         width: double.infinity,
                                         child: TextButton(
-                                          child: Text("Cancel"),
+                                          child: Text("${AppLocalizations.of(context)?.cancel}"),
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
@@ -133,11 +136,11 @@ class SettingUI extends ConsumerWidget {
                                     ),
                                     Flexible(
                                       flex: 1,
-                                      child: Container(
+                                      child: SizedBox(
                                         height: 50,
                                         width: double.infinity,
                                         child: TextButton(
-                                          child: Text("Save"),
+                                          child: Text("${AppLocalizations.of(context)?.save}"),
                                           onPressed: () {
                                             if (ctl.text.isNotEmpty) {
                                               ref
@@ -155,19 +158,19 @@ class SettingUI extends ConsumerWidget {
                               ],
                             ));
                   },
-                  icon: Icon(Icons.edit)),
+                  icon: const Icon(Icons.edit)),
             ],
           )),
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.date_range,
             color: Colors.teal,
           ),
-          title: Text("Date"),
+          title: Text(AppLocalizations.of(context)?.date ?? ""),
           onTap: () {
             showDatePicker(
                     builder: ((context, child) =>
@@ -183,62 +186,80 @@ class SettingUI extends ConsumerWidget {
             });
           },
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.language,
             color: Colors.teal,
           ),
-          title: Text("Language"),
-          onTap: () {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Comming soon")));
-          },
+          title: Text(AppLocalizations.of(context)?.language ?? ""),
+          trailing: DropdownButton<String>(
+            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            items: const [
+              DropdownMenuItem(
+                value: "en",
+                child: Text("English"),
+              ),
+              DropdownMenuItem(
+                value: "my",
+                child: Text("မြန်မာ"),
+              ),
+            ],
+            value: ref.watch(localChangeProvider).currentLocal.toString(),
+            onChanged: (l) {
+             // print(l);
+              ref.watch(localChangeProvider.notifier).change(Locale(l ?? "en"));
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   content: Text(AppLocalizations.of(context)?.language ?? ""),
+              //   duration: const Duration(milliseconds: 300),
+              // ));
+            },
+          ),
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.pin,
             color: Colors.teal,
           ),
-          title: Text("setup pin"),
+          title: Text(AppLocalizations.of(context)?.pin ?? ""),
           onTap: () {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Comming soon")));
+                .showSnackBar(const SnackBar(content: Text("Comming soon")));
           },
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ExpansionTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.calendar_month,
             color: Colors.teal,
           ),
-          title: Text("Default Chart type"),
+          title: Text(AppLocalizations.of(context)?.defaultChartResult ?? ""),
           children: [
             Container(
                 height: 60,
-                padding: EdgeInsets.only(top: 10, bottom: 10),
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: DateToggle(
                   selectedDateType: ref.watch(dateTypeChangeNotifierProvider),
                 )),
           ],
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.currency_exchange,
             color: Colors.teal,
           ),
-          title: Text("Currency"),
-          trailing: Container(
+          title: Text(AppLocalizations.of(context)?.currency ?? ""),
+          trailing: SizedBox(
             width: 150,
             child: Consumer(builder: ((context, ref, child) {
               final selected = ref.watch(currencyChangeNotifier);
@@ -253,21 +274,21 @@ class SettingUI extends ConsumerWidget {
                   iconEnabledColor: Colors.white70,
                   items: currencies
                       .map((e) => DropdownMenuItem(
-                            child: Text(e.name.toString()),
                             value: e,
+                            child: Text(getCurrencyLocale(context, e)),
                           ))
                       .toList(),
                   value: selected.currency,
                   selectedItemBuilder: ((context) => currencies
                       .map((e) => Container(
-                            child: Text(
-                              "${e.name}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 20,
                             ),
                             alignment: Alignment.centerLeft,
+                            child: Text(
+                              getCurrencyLocale(context, e),
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ))
                       .toList()),
                   onChanged: (c) {
@@ -276,18 +297,19 @@ class SettingUI extends ConsumerWidget {
             })),
           ),
         ),
-        Divider(
+        const Divider(
           height: 1,
         ),
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.info_outline_rounded,
             color: Colors.teal,
           ),
-          title: Text("About"),
+          title: Text(AppLocalizations.of(context)?.about ?? ""),
           onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AboutUI())),
-        )
+              context, MaterialPageRoute(builder: (context) => const AboutUI())),
+        ),
+        
       ]),
     );
   }

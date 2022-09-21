@@ -26,12 +26,13 @@ class SettingStateProvider extends StateNotifier<Map<String, String>> {
     state = {...state};
     settingBox.put(defaultDateType, dt);
   }
+
 }
 final settingProvider =
     StateNotifierProvider<SettingStateProvider, Map<String, String>>(((ref) {
   return SettingStateProvider({
     profileName: settingBox.get(profileName) ?? notfound,
     profilePic: settingBox.get(profilePic) ?? notfound,
-    defaultDateType: settingBox.get(defaultDateType) ?? "month"
+    defaultDateType: settingBox.get(defaultDateType) ?? "month",
   });
 }));

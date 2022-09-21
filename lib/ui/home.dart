@@ -14,36 +14,29 @@ import 'package:mybudget/ui/expense.dart';
 import 'package:mybudget/ui/income.dart';
 import 'package:mybudget/ui/setting.dart';
 import 'package:mybudget/utils/budgetcal.dart';
+import 'package:mybudget/utils/localecurrency.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/cardwidget.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/mypiechart.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class HomePage extends HookWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: HomeViewUI(),
+    return const Scaffold(
+      body:HomeViewUI(),
     );
   }
 }
 
 class HomeViewUI extends ConsumerWidget {
   const HomeViewUI({Key? key}) : super(key: key);
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDateType = ref.watch(dateTypeChangeNotifierProvider);
-    final selectedDate = ref.watch(dateStateNotifier);
-    final exps = ref.watch(expStateProvider);
-    var categoryCalc = totalByCategory(exps, selectedDateType, selectedDate,
-        ref.watch(currencyChangeNotifier).currency);
-    categoryCalc.forEach((k, v) {
-      if (v > 0) {
-        debugPrint("$k : $v");
-      }
-    });
+     
     return CustomScrollView(slivers: [
       SliverList(delegate: SliverChildListDelegate(getSliverList(context, ref)))
     ]);
@@ -69,12 +62,12 @@ class HomeViewUI extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(),
+            const SizedBox(),
             Text(
               ref.watch(settingProvider)["profileName"] == "notfound"
                   ? "John Doe"
                   : ref.watch(settingProvider)["profileName"]!,
-              style: TextStyle(
+              style: const TextStyle(
                   fontFamily: 'Itim',
                   fontSize: 28,
                   fontWeight: FontWeight.bold),
@@ -111,7 +104,7 @@ class HomeViewUI extends ConsumerWidget {
         width: double.infinity,
         child: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Flexible(
@@ -123,21 +116,21 @@ class HomeViewUI extends ConsumerWidget {
                     children: [
                       Center(
                         child: CardWidget(
-                          title: "Income",
-                          amount: "${getBalance(totalIncome)}",
+                          title: AppLocalizations.of(context)?.income ?? "",
+                          amount: getBalance(totalIncome),
                           color: Colors.green,
                         ),
                       ),
-                      Positioned(
-                        child: Icon(Icons.arrow_circle_down,
-                            color: Colors.white70),
+                      const Positioned(
                         top: 15,
                         left: 15,
+                        child: Icon(Icons.arrow_circle_down,
+                            color: Colors.white70),
                       ),
                     ],
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Flexible(
@@ -151,23 +144,23 @@ class HomeViewUI extends ConsumerWidget {
                     children: [
                       Center(
                         child: CardWidget(
-                          title: "Expense",
-                          amount: "${getBalance(totalExpense)}",
+                          title: AppLocalizations.of(context)?.expense ?? "",
+                          amount: getBalance(totalExpense),
                           color: Colors.red,
                         ),
                       ),
-                      Positioned(
+                      const Positioned(
+                        top: 15,
+                        left: 15,
                         child: Icon(
                           Icons.arrow_circle_up,
                           color: Colors.white70,
                         ),
-                        top: 15,
-                        left: 15,
                       ),
                     ],
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
           ],
@@ -175,16 +168,16 @@ class HomeViewUI extends ConsumerWidget {
       ),
     );
     children.add(
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
     );
     children.add(
-      Container(
+      SizedBox(
         height: 60,
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Text("Overall expense"),
-          Container(
+          Text("${AppLocalizations.of(context)?.overall}"),
+          SizedBox(
               height: 30,
               child: DateToggle(
                 selectedDateType: ref.watch(dateTypeChangeNotifierProvider),
@@ -193,7 +186,7 @@ class HomeViewUI extends ConsumerWidget {
       ),
     );
     children.add(
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
     );
@@ -233,7 +226,7 @@ class HomeViewUI extends ConsumerWidget {
                               ref.watch(currencyChangeNotifier).currency,
                               ref.watch(dateTypeChangeNotifierProvider),
                               ref.watch(dateStateNotifier)),
-                          title: categoriesString[e.category]!),
+                          title: getCategoryLocal(context, e.category)),
                     ));
               },
               child: BudgetItem(
@@ -242,7 +235,7 @@ class HomeViewUI extends ConsumerWidget {
                 amount: getBalance(e.amount),
                 date: '',
                 showSub: false,
-                title: categoriesString[e.category]!,
+                title: getCategoryLocal(context, e.category),
               ),
             )));
     return children;

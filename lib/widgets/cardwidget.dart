@@ -18,7 +18,7 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
-        filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -29,7 +29,7 @@ class CardWidget extends StatelessWidget {
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               width: 1.5,
               color: color.withOpacity(0.2),
@@ -42,7 +42,7 @@ class CardWidget extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontFamily: 'Itim', fontSize: 20),
+                  style: const TextStyle(fontFamily: 'Itim', fontSize: 20),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -52,24 +52,24 @@ class CardWidget extends StatelessWidget {
                         currencySymbols[
                             ref.watch(currencyChangeNotifier).currency]!,
                         style:
-                            TextStyle(fontSize: 22, fontFamily: 'meriendaone'),
+                            const TextStyle(fontSize: 22, fontFamily: 'meriendaone'),
                       );
                     })),
-                    SizedBox(
+                    const SizedBox(
                       width: 2,
                     ),
                     Text(
                       "$amount",
-                      style: TextStyle(fontFamily: 'meriendaone', fontSize: 22),
+                      style: const TextStyle(fontFamily: 'meriendaone', fontSize: 22),
                     ),
-                    SizedBox(width: 4,),
+                    const SizedBox(width: 4,),
                     Consumer(builder: (context, ref, child) {
                       final currency=ref.watch(currencyChangeNotifier).currency.name;
                       return Padding(
-                        padding: EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.only(top: 10),
                         child: Text(
                           currency == "mmk" ?  currency.toUpperCase() :currency[0].toUpperCase() +currency.substring(1),
-                          style: TextStyle(fontSize: 11,fontStyle: FontStyle.italic,fontFamily: 'itim'),
+                          style: const TextStyle(fontSize: 11,fontStyle: FontStyle.italic,fontFamily: 'itim'),
                         ),
                       );
                     }),

@@ -4,7 +4,7 @@ class DarkTheme {
   static ThemeData darkTheme() => ThemeData(
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.grey[800],
-            selectedIconTheme: IconThemeData(color: Colors.black)),
+            selectedIconTheme: const IconThemeData(color: Colors.black)),
         primarySwatch: const MaterialColor(0x73000000, <int, Color>{
           50: Color(0x1F000000),
           100: Color(0x42000000),
@@ -20,7 +20,7 @@ class DarkTheme {
         primaryColor: Colors.grey[800],
         accentColor: Colors.grey[800],
         scaffoldBackgroundColor: Colors.grey[800],
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           subtitle1: TextStyle(color: Colors.white70),
           subtitle2: TextStyle(color: Colors.white70),
           bodyText1: TextStyle(color: Colors.white70),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ConfirmDialog extends StatelessWidget {
   const ConfirmDialog({Key? key}) : super(key: key);
 
@@ -8,12 +8,12 @@ class ConfirmDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       title: Text(
-        "Delete",
-        style: TextStyle(color: Colors.white),
+        "${AppLocalizations.of(context)?.delete}",
+        style: const TextStyle(color: Colors.white),
         textAlign: TextAlign.center,
       ),
       content: Text(
-        "Are you sure?",
+        "${AppLocalizations.of(context)?.delmsg}",
         textAlign: TextAlign.center,
       ),
       actions: [
@@ -26,23 +26,23 @@ class ConfirmDialog extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   child: OutlinedButton(
-                    child: const Text(
-                      "Cancel",
-                      style: TextStyle(color: Colors.red),
+                    child: Text(
+                      "${AppLocalizations.of(context)?.cancel}",
+                      style: const TextStyle(color: Colors.red),
                     ),
                     onPressed: () => Navigator.pop(context, false),
                   ),
                 ),
               ),
-              SizedBox(width: 5,),
+              const SizedBox(width: 5,),
               Flexible(
                 child: SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: OutlinedButton(
-                    child: const Text(
-                      "Confirm",
-                      style: TextStyle(color: Colors.green),
+                    child:   Text(
+                      "${AppLocalizations.of(context)?.confirm}",
+                      style: const TextStyle(color: Colors.green),
                     ),
                     onPressed: () => Navigator.pop(context, true),
                   ),

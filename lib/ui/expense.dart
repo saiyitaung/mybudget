@@ -5,7 +5,8 @@ import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
-import 'package:mybudget/ui/categorydetail.dart';
+import 'package:mybudget/myproviders/localeprovider.dart';
+ 
 import 'package:mybudget/ui/edit.dart';
 import 'package:mybudget/ui/newexp.dart';
 import 'package:mybudget/utils/budgetcal.dart';
@@ -15,7 +16,7 @@ import 'package:mybudget/widgets/confirmdialog.dart';
 import 'package:mybudget/widgets/datetoggleswitch.dart';
 import 'package:mybudget/widgets/emptyusage.dart';
 import 'package:mybudget/widgets/linechart.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExpenseUI extends ConsumerWidget {
   const ExpenseUI({Key? key}) : super(key: key);
@@ -28,12 +29,12 @@ class ExpenseUI extends ConsumerWidget {
         BudgetCalc<Expense>(exps, ref.watch(currencyChangeNotifier).currency);
     final total = getTotalBudget(budgetCalc, selectedDateType, selectedDate);
     final currencyString = ref.watch(currencyChangeNotifier);
-    debugPrint("rebuild $selectedDateType");
+   // debugPrint("rebuild $selectedDateType");
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: Text(" Expense"),
+            title: Text(AppLocalizations.of(context)?.expense ?? " "),
             backgroundColor: Color(0xff232d37),
             pinned: true,
             expandedHeight: 120,
@@ -46,8 +47,8 @@ class ExpenseUI extends ConsumerWidget {
                   children: [
                     Container(
                         child: Text(
-                      "Total ",
-                      style: TextStyle(
+                      "${AppLocalizations.of(context)?.total} ",
+                      style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Itim"),
@@ -57,13 +58,13 @@ class ExpenseUI extends ConsumerWidget {
                       children: [
                         Text(
                           " ${getBalance(getTotalBudget(budgetCalc, selectedDateType, selectedDate))}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: "meriendaone",
                               fontSize: 24,
                               fontWeight: FontWeight.bold),
                         ),
                         Container(
-                          padding: EdgeInsets.only(top: 12, left: 5),
+                          padding: const EdgeInsets.only(top: 12, left: 5),
                           child: Text(
                             // utils.currenciesString[selectedCurrency!]!,
                             currencyString.currency.name == "mmk"
@@ -71,7 +72,7 @@ class ExpenseUI extends ConsumerWidget {
                                 : currencyString.currency.name[0]
                                         .toUpperCase() +
                                     currencyString.currency.name.substring(1),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white54,
                               fontFamily: "meriendaone",
@@ -95,7 +96,7 @@ class ExpenseUI extends ConsumerWidget {
             Theme.of(context).scaffoldBackgroundColor.withOpacity(.7),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: ((context) => NewExpUI())));
+              context, MaterialPageRoute(builder: ((context) => const NewExpUI())));
         },
         child:const Icon(Icons.add),
       ),
@@ -108,9 +109,9 @@ class ExpenseUI extends ConsumerWidget {
     Map<double, double> lineBarData = {};
     final budgetCal =
         BudgetCalc<Expense>(exps, ref.watch(currencyChangeNotifier).currency);
-    debugPrint("total week : ${budgetCal.totalInWeek(DateTime.now())}");
+   // debugPrint("total week : ${budgetCal.totalInWeek(DateTime.now())}");
     List<Widget> childs = [];
-    debugPrint("${selectedDateType}");
+   // debugPrint("${selectedDateType}");
     switch (selectedDateType) {
       case DateType.week:
         lineBarData = weekLineBarData(
@@ -148,11 +149,11 @@ class ExpenseUI extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
+              padding: const EdgeInsets.only(left: 20),
               child: Text(
-                "Activities",
-                style: TextStyle(fontFamily: "itim", fontSize: 28),
+                "${AppLocalizations.of(context)?.activities}",
+                style: TextStyle(fontFamily: "itim", fontSize:ref.watch(localChangeProvider).currentLocal.languageCode =="my" ? 18:28),
               ),
-              padding: EdgeInsets.only(left: 20),
             ),
             Container(
                 height: 30,
@@ -173,8 +174,8 @@ class ExpenseUI extends ConsumerWidget {
                           }
                         });
                       },
-                      icon: Icon(Icons.calendar_month),
-                      padding: EdgeInsets.only(bottom: 2),
+                      icon: const Icon(Icons.calendar_month),
+                      padding:  const EdgeInsets.only(bottom: 2),
                     ),
                     DateToggle(selectedDateType: selectedDateType)
                   ],
@@ -206,6 +207,7 @@ class ExpenseUI extends ConsumerWidget {
               (e) => Slidable(
                 endActionPane: ActionPane(
                   extentRatio: .3,
+                  motion: const ScrollMotion(),
                   children: [
                     SlidableAction(
                       backgroundColor:
@@ -236,7 +238,6 @@ class ExpenseUI extends ConsumerWidget {
                       icon: Icons.delete_forever_sharp,
                     ),
                   ],
-                  motion: const ScrollMotion(),
                 ),
                 child: BudgetItem(
                   icondata: expCategoryIcons[e.expCategory]!,

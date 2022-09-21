@@ -6,10 +6,11 @@ import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/expcategoryprovider.dart';
 import 'package:mybudget/myproviders/expstateprovider.dart';
+import 'package:mybudget/utils/localecurrency.dart';
 import 'package:mybudget/utils/utils.dart';
 import 'package:mybudget/widgets/inputtext.dart';
 import 'package:uuid/uuid.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class NewExpUI extends HookWidget {
   const NewExpUI({Key? key}) : super(key: key);
 
@@ -21,7 +22,7 @@ class NewExpUI extends HookWidget {
     var selectedCategory = ExpenseCategory.foodanddrink;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text("New Expense")),
+      appBar: AppBar(title:Text("${AppLocalizations.of(context)?.newexp}")),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -30,7 +31,7 @@ class NewExpUI extends HookWidget {
               height: 10,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text("Currency"),
+               Text(AppLocalizations.of(context)?.currency ?? ""),
               SizedBox(
                 height: 50,
                 width: 200,
@@ -49,7 +50,7 @@ class NewExpUI extends HookWidget {
                       items: currencies
                           .map((e) => DropdownMenuItem(
                                 value: e,
-                                child: Text(e.name),
+                                child: Text(getCurrencyLocale(context, e)),
                               ))
                           .toList(),
                       value: selected.currency,
@@ -60,7 +61,7 @@ class NewExpUI extends HookWidget {
                                 ),
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  e.name,
+                                  getCurrencyLocale(context, e),
                                   style: const TextStyle(color: Colors.white),
                                 ),
                               ))
@@ -74,7 +75,7 @@ class NewExpUI extends HookWidget {
             ]),
             Consumer(builder: (context, ref, child) {
               return InputTextWidget(
-                label: "Detail",
+                label: AppLocalizations.of(context)?.detail ?? "",
                 type: TextInputType.text,
                 ctl: detail,
                 autoCompleteText:
@@ -85,7 +86,7 @@ class NewExpUI extends HookWidget {
               height: 10,
             ),
             InputTextWidget(
-              label: "Amount",
+              label: AppLocalizations.of(context)?.amount?? "",
               type: TextInputType.number,
               ctl: amount,
               autoCompleteText: [],
@@ -113,7 +114,7 @@ class NewExpUI extends HookWidget {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(categoriesString[e.name]!)
+                          Text(getCategoryLocal(context, e.name))
                         ]),
                       ),
                     )
@@ -135,7 +136,7 @@ class NewExpUI extends HookWidget {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(categoriesString[e.name]!)
+                          Text(getCategoryLocal(context, e.name))
                         ]),
                       ),
                     )
@@ -170,10 +171,10 @@ class NewExpUI extends HookWidget {
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   alignment: Alignment.center,
-                  child: const Text(
-                    "save",
+                  child:   Text(
+                    "${AppLocalizations.of(context)?.save}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               );

@@ -1,17 +1,13 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mybudget/entities/budgetcategory.dart';
 import 'package:mybudget/entities/expense.dart';
 import 'package:mybudget/myproviders/currencychangeprovider.dart';
 import 'package:mybudget/myproviders/datetypeprovider.dart';
-import 'package:mybudget/myproviders/expstateprovider.dart';
 import 'package:mybudget/utils/utils.dart';
-import 'package:mybudget/widgets/budgetitem.dart';
 import 'package:mybudget/widgets/categorydetaillinechart.dart';
-import 'package:mybudget/widgets/mypiechart.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class CategoryDetailUI extends ConsumerWidget {
   final String title;
   final List<Expense> filteredExpense;
@@ -42,7 +38,7 @@ class CategoryDetailUI extends ConsumerWidget {
                 children: [
                   Container(
                       child: Text(
-                    "Total ",
+                    "${AppLocalizations.of(context)?.total} ",
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -132,7 +128,7 @@ class CategoryDetailUI extends ConsumerWidget {
     });
     categoryUsage.sort((a, b) => b.amount.compareTo(a.amount));
     children.add(Container(
-      child: Text("Common Usage",style: TextStyle(fontFamily: 'itim',fontSize: 22),),
+      child: Text("${AppLocalizations.of(context)?.commonuse}",style: TextStyle(fontFamily: 'itim',fontSize: 22),),
       alignment: Alignment.center,
     ));
     children.addAll(categoryUsage
@@ -147,25 +143,12 @@ class CategoryDetailUI extends ConsumerWidget {
               subtitle: LinearPercentIndicator(
                 barRadius: Radius.circular(10),
                 lineHeight: 14,
-                center: Text("${((e.amount / total) * 100).toStringAsFixed(1)}%",style: TextStyle(color: Colors.black),),
+                center: Text("${((e.amount / total) * 100).toStringAsFixed(1)}%",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                 percent: e.amount / total,
                 progressColor: Colors.redAccent,
               ),
             ))
         .toList());
-        children.add(Divider());
-    // children.add(MyPieChart(
-    //   categoryUsage: categoryUsage,
-    //   total: total,
-    //   showIcon: false,
-    // ));
-    // filteredExpense.sort(((a, b) => b.timeStamp.compareTo(a.timeStamp)));
-    // children.addAll(filteredExpense.map((e) => BudgetItem(
-    //     icondata: expCategoryIcons[e.expCategory]!,
-    //     iconbgColor: expCategoryColors[e.expCategory]!,
-    //     title: e.detail,
-    //     date: dateFmt(e.timeStamp),
-    //     amount: getBalance(e.amount))));
     return children;
   }
 
